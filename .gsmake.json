@@ -1,0 +1,16 @@
+{
+    "name":"github.com/gsrpc/jvmrpc",
+
+    "domain":"gslang",
+
+    "import" : [
+        {"name" : "github.com/gsrpc/gsrpc","domain":"task|gslang","version":"release/v1.0"}
+    ],
+
+
+    "properties":{
+        "gsrpc":{
+            "test":[]
+        }
+    }
+}
