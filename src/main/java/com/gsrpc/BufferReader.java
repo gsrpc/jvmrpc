@@ -31,7 +31,7 @@ public class BufferReader implements Reader {
     }
 
     @Override
-    public short ReadUint16() throws Exception {
+    public short ReadUInt16() throws Exception {
         return content.getShort();
     }
 
@@ -41,7 +41,7 @@ public class BufferReader implements Reader {
     }
 
     @Override
-    public int ReadUint32() throws Exception {
+    public int ReadUInt32() throws Exception {
         return content.getInt();
     }
 
@@ -67,7 +67,7 @@ public class BufferReader implements Reader {
 
     @Override
     public String ReadString() throws Exception {
-        short length = ReadUint16();
+        short length = ReadUInt16();
 
         byte[] buff = new byte[length];
 
@@ -90,7 +90,7 @@ public class BufferReader implements Reader {
 
     @Override
     public byte[] ReadBytes() throws Exception {
-        short length = ReadUint16();
+        short length = ReadUInt16();
 
         byte[] buff = new byte[length];
 

@@ -11,11 +11,11 @@ public interface Writer
 
     void WriteInt16(short val) throws Exception;
 
-    void WriteUint16(short val) throws Exception;
+    void WriteUInt16(short val) throws Exception;
 
     void WriteInt32(int val) throws Exception;
 
-    void WriteUint32(int val) throws Exception;
+    void WriteUInt32(int val) throws Exception;
 
     void WriteInt64(long val) throws Exception;
 

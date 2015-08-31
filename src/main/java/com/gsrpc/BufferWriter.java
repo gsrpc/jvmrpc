@@ -31,7 +31,7 @@ public class BufferWriter implements Writer {
     }
 
     @Override
-    public void WriteUint16(short val) throws Exception {
+    public void WriteUInt16(short val) throws Exception {
         content.write((byte) (val & 0xff));
 
         content.write((byte) ((val >> 8) & 0xff));
@@ -49,7 +49,7 @@ public class BufferWriter implements Writer {
     }
 
     @Override
-    public void WriteUint32(int val) throws Exception {
+    public void WriteUInt32(int val) throws Exception {
         content.write((byte) (val & 0xff));
 
         content.write((byte) ((val >> 8) & 0xff));
@@ -114,7 +114,7 @@ public class BufferWriter implements Writer {
     public void WriteString(String val) throws Exception {
         byte[] content = val.getBytes("UTF8");
 
-        WriteUint16((short) content.length);
+        WriteUInt16((short) content.length);
 
         this.content.write(content);
     }
@@ -127,7 +127,7 @@ public class BufferWriter implements Writer {
 
     @Override
     public void WriteBytes(byte[] val) throws Exception {
-        WriteUint16((short) val.length);
+        WriteUInt16((short) val.length);
         WriteArrayBytes(val);
     }
 

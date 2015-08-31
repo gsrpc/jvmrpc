@@ -11,11 +11,11 @@ public interface Reader {
 
     short ReadInt16() throws Exception;
 
-    short ReadUint16() throws Exception;
+    short ReadUInt16() throws Exception;
 
     int ReadInt32() throws Exception;
 
-    int ReadUint32() throws Exception;
+    int ReadUInt32() throws Exception;
 
     long ReadInt64() throws Exception;
 

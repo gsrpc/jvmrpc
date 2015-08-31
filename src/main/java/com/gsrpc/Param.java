@@ -1,0 +1,41 @@
+package com.gsrpc;
+
+import com.gsrpc.Writer;
+
+import com.gsrpc.Reader;
+
+import java.nio.ByteBuffer;
+
+
+/*
+ * Param generate by gs2java,don't modify it manually
+ */
+public class Param
+{
+
+    private  byte[] content = null;
+
+
+
+    public byte[] getContent()
+    {
+        return this.content;
+    }
+    public void setContent(byte[] arg)
+    {
+        this.content = arg;
+    }
+
+    public void Marshal(Writer writer)  throws Exception
+    {
+
+        writer.WriteBytes(content);
+
+    }
+    public void Unmarshal(Reader reader) throws Exception
+    {
+
+        content = reader.ReadBytes();
+
+    }
+}
