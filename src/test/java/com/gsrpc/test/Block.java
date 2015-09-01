@@ -1,10 +1,10 @@
 package com.gsrpc.test;
 
+import com.gsrpc.Writer;
+
 import com.gsrpc.Reader;
 
 import java.nio.ByteBuffer;
-
-import com.gsrpc.Writer;
 
 
 /*
@@ -15,7 +15,7 @@ public class Block
 
     private  byte[] content = new byte[256];
 
-    private  KV[][] kV = new KV[][128];
+    private  KV[][] kV = new KV[12][128];
 
 
 
@@ -40,43 +40,45 @@ public class Block
     public void Marshal(Writer writer)  throws Exception
     {
 
-        writer.WriteseqBytes(content);
+        writer.WriteArrayBytes(content);
 
         writer.WriteUInt16((short)kV.length);
-for(KV[] v3 : kV){
-writer.WriteUInt16((short)v3.length);
-for(KV v4 : v3){
-v4.Marshal(writer);				}			}
+
+		for(KV[] v3 : kV){
+
+			writer.WriteUInt16((short)v3.length);
+
+			for(KV v4 : v3){
+
+				v4.Marshal(writer);
+
+			}
+
+		}
 
     }
     public void Unmarshal(Reader reader) throws Exception
     {
 
-        reader.ReadseqBytes(content);
+        reader.ReadArrayBytes(content);
 
-        int imax3 = reader.ReadUInt16();
+        for(int i3 = 0; i3 < kV.length; i3 ++ ){
 
-			kV = new KV[][imax3];
+			KV[] v3 = kV[i3];
 
-			for(int i3 = 0; i3 < imax3; i3 ++ ){
+			for(int i4 = 0; i4 < v3.length; i4 ++ ){
 
-				KV[] v3 = new KV[12];
+				KV v4 = v3[i4];
 
-int imax4 = reader.ReadUInt16();
+				v4.Unmarshal(reader);
 
-				v3 = new KV[imax4];
-
-				for(int i4 = 0; i4 < imax4; i4 ++ ){
-
-					KV v4 = new KV();
-
-v4.Unmarshal(reader);
-					v3[i4] = v4;
-
-				}
-				kV[i3] = v3;
+				v3[i4] = v4;
 
 			}
+
+			kV[i3] = v3;
+
+		}
 
     }
 }

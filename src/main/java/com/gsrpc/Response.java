@@ -19,7 +19,7 @@ public class Response
 
     private  byte exception = 0;
 
-    private  byte[] content = null;
+    private  byte[] content = new byte[0];
 
 
 

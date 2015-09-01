@@ -1,10 +1,10 @@
 package com.gsrpc;
 
-import com.gsrpc.Writer;
-
 import com.gsrpc.Reader;
 
 import java.nio.ByteBuffer;
+
+import com.gsrpc.Writer;
 
 
 /*
@@ -13,7 +13,7 @@ import java.nio.ByteBuffer;
 public class Param
 {
 
-    private  byte[] content = null;
+    private  byte[] content = new byte[0];
 
 
 

@@ -19,7 +19,7 @@ public class Request
 
     private  short service = 0;
 
-    private  Param[] params = null;
+    private  Param[] params = new Param[0];
 
 
 
@@ -69,8 +69,12 @@ public class Request
         writer.WriteUInt16(service);
 
         writer.WriteUInt16((short)params.length);
-			for(Param v3 : params){
-v3.Marshal(writer);			}
+
+		for(Param v3 : params){
+
+			v3.Marshal(writer);
+
+		}
 
     }
     public void Unmarshal(Reader reader) throws Exception
@@ -82,18 +86,19 @@ v3.Marshal(writer);			}
 
         service = reader.ReadUInt16();
 
-        int imax3 = reader.ReadUInt16();
+        int max3 = reader.ReadUInt16();
 
-			params = new Param[imax3];
+		params = new Param[max3];
 
-			for(int i3 = 0; i3 < imax3; i3 ++ ){
+		for(int i3 = 0; i3 < max3; i3 ++ ){
 
-				Param v3 = new Param();
+			Param v3 = new Param();
 
-				v3.Unmarshal(reader);
-				params[i3] = v3;
+			v3.Unmarshal(reader);
 
-			}
+			params[i3] = v3;
+
+		}
 
     }
 }

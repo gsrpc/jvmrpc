@@ -1,10 +1,10 @@
 package com.gsrpc;
 
-import com.gsrpc.Reader;
-
 import java.nio.ByteBuffer;
 
 import com.gsrpc.Writer;
+
+import com.gsrpc.Reader;
 
 
 /*
@@ -15,7 +15,7 @@ public class WhoAmI
 
     private  Device iD = new Device();
 
-    private  byte[] context = null;
+    private  byte[] context = new byte[0];
 
 
 

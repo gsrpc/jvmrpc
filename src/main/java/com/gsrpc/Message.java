@@ -17,7 +17,7 @@ public class Message
 
     private  byte agent = 0;
 
-    private  byte[] content = null;
+    private  byte[] content = new byte[0];
 
 
 

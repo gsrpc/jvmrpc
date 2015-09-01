@@ -15,14 +15,14 @@ public final class RESTfulRPC {
     /**
      * gsrpc net interface
      */
-    private com.gsrpc.Net net;
+    private com.gsrpc.Channel net;
 
     /**
      * remote service id
      */
     private short serviceID;
 
-    public RESTfulRPC(com.gsrpc.Net net, short serviceID){
+    public RESTfulRPC(com.gsrpc.Channel net, short serviceID){
         this.net = net;
         this.serviceID = serviceID;
     }
@@ -81,7 +81,42 @@ public final class RESTfulRPC {
                     promise.Notify(e,null);
                     return;
                 }
+
                 try{
+
+                    if(callReturn.getException() != (byte)-1) {
+                        switch(callReturn.getException()) {
+                        
+                        case 0:{
+                            com.gsrpc.BufferReader reader = new com.gsrpc.BufferReader(callReturn.getContent());
+
+                            RemoteException exception = new RemoteException();
+
+                            exception.Unmarshal(reader);
+
+                            promise.Notify(exception,null);
+
+                            return;
+                        }
+                        
+                        case 1:{
+                            com.gsrpc.BufferReader reader = new com.gsrpc.BufferReader(callReturn.getContent());
+
+                            NotFound exception = new NotFound();
+
+                            exception.Unmarshal(reader);
+
+                            promise.Notify(exception,null);
+
+                            return;
+                        }
+                        
+                        default:
+                            promise.Notify(new com.gsrpc.RemoteException(String.format("catch unknown exception(%d) for RESTful#Post",callReturn.getException())),null);
+                            return;
+                        }
+                    }
+
                     
                     promise.Notify(null,null);
                     
@@ -131,9 +166,32 @@ public final class RESTfulRPC {
                     promise.Notify(e,null);
                     return;
                 }
+
                 try{
+
+                    if(callReturn.getException() != (byte)-1) {
+                        switch(callReturn.getException()) {
+                        
+                        case 0:{
+                            com.gsrpc.BufferReader reader = new com.gsrpc.BufferReader(callReturn.getContent());
+
+                            NotFound exception = new NotFound();
+
+                            exception.Unmarshal(reader);
+
+                            promise.Notify(exception,null);
+
+                            return;
+                        }
+                        
+                        default:
+                            promise.Notify(new com.gsrpc.RemoteException(String.format("catch unknown exception(%d) for RESTful#Get",callReturn.getException())),null);
+                            return;
+                        }
+                    }
+
                     
-                    					byte[] returnParam = null;
+                    					byte[] returnParam = new byte[0];
 
 					{
 
