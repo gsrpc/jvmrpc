@@ -1,21 +1,19 @@
-package com.gsrpc;
+package com.gsrpc.test;
+
+import com.gsrpc.Writer;
 
 import com.gsrpc.Reader;
 
 import java.nio.ByteBuffer;
 
-import com.gsrpc.Writer;
-
 
 /*
- * ArchType generate by gs2java,don't modify it manually
+ * TimeUnit generate by gs2java,don't modify it manually
  */
-public enum ArchType {
-    X86((byte)0),
-	X64((byte)1),
-	ARM((byte)2);
+public enum TimeUnit {
+    Second((byte)0);
     private byte value;
-    ArchType(byte val){
+    TimeUnit(byte val){
         this.value = val;
     }
     @Override
@@ -24,16 +22,10 @@ public enum ArchType {
         {
         
         case 0:
-            return "X86";
-        
-        case 1:
-            return "X64";
-        
-        case 2:
-            return "ARM";
+            return "Second";
         
         }
-        return String.format("ArchType#%d",this.value);
+        return String.format("TimeUnit#%d",this.value);
     }
     public byte getValue() {
         return this.value;
@@ -42,20 +34,14 @@ public enum ArchType {
     {
          writer.WriteByte(getValue()); 
     }
-    public static ArchType Unmarshal(Reader reader) throws Exception
+    public static TimeUnit Unmarshal(Reader reader) throws Exception
     {
         byte code =   reader.ReadByte(); 
         switch(code)
         {
         
         case 0:
-            return ArchType.X86;
-        
-        case 1:
-            return ArchType.X64;
-        
-        case 2:
-            return ArchType.ARM;
+            return TimeUnit.Second;
         
         }
         throw new Exception("unknown enum constant :" + code);
