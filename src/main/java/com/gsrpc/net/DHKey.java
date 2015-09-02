@@ -13,7 +13,7 @@ public final class DHKey {
     private BigInteger _E;
     private BigInteger _R;
 
-    public DHKey(BigInteger G, BigInteger P) throws Exception {
+    public DHKey(BigInteger G, BigInteger P){
 
         _G = G;
         _P = P;

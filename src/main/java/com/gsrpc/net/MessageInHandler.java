@@ -6,6 +6,8 @@ import com.gsrpc.Message;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -16,6 +18,8 @@ import java.util.List;
  * decode input stream as rpc message objects
  */
 public final class MessageInHandler extends ByteToMessageDecoder {
+
+    private static final Logger logger = LoggerFactory.getLogger(MessageInHandler.class);
 
     private enum ReadState {
         Header,Body
@@ -44,6 +48,8 @@ public final class MessageInHandler extends ByteToMessageDecoder {
             reader.setContent(buff);
 
             length = reader.ReadUInt16() & 0xffff;
+
+            logger.trace("try receive message({})",length);
         }
 
 
@@ -64,5 +70,7 @@ public final class MessageInHandler extends ByteToMessageDecoder {
         out.add(message);
 
         state = ReadState.Header;
+
+        logger.trace("receive message({}) -- success",length);
     }
 }

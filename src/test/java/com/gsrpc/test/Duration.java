@@ -1,10 +1,10 @@
 package com.gsrpc.test;
 
+import java.nio.ByteBuffer;
+
 import com.gsrpc.Writer;
 
 import com.gsrpc.Reader;
-
-import java.nio.ByteBuffer;
 
 
 /*
@@ -50,7 +50,7 @@ public class Duration
 
         value = reader.ReadInt32();
 
-        unit.Unmarshal(reader);
+        unit = TimeUnit.Unmarshal(reader);
 
     }
 }

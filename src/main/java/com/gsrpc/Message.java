@@ -1,10 +1,10 @@
 package com.gsrpc;
 
-import java.nio.ByteBuffer;
-
 import com.gsrpc.Writer;
 
 import com.gsrpc.Reader;
+
+import java.nio.ByteBuffer;
 
 
 /*
@@ -61,7 +61,7 @@ public class Message
     public void Unmarshal(Reader reader) throws Exception
     {
 
-        code.Unmarshal(reader);
+        code = Code.Unmarshal(reader);
 
         agent = reader.ReadByte();
 

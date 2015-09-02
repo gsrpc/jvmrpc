@@ -122,8 +122,8 @@ public class SinkHandler extends ChannelInboundHandlerAdapter implements Sink{
         callback.setTimer(wheelTimer.newTimeout(new TimerTask() {
             @Override
             public void run(Timeout timeout) throws Exception {
-                if (promises.remove(id, callback)) {
-                    callback.Return(new TimeoutException("rpc timeout"), null);
+                if (promises.remove((int)id, callback)) {
+                    //callback.Return(new TimeoutException("rpc timeout"), null);
                 }
             }
         }, callback.getTimeout(), TimeUnit.SECONDS));

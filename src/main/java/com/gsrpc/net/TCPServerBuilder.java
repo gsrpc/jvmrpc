@@ -8,6 +8,8 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -100,6 +102,8 @@ public final class TCPServerBuilder {
 
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
+
+                ch.pipeline().addLast(new LoggingHandler(LogLevel.TRACE));
 
                 ch.pipeline().addLast(new MessageInHandler(), new MessageOutHandler());
 

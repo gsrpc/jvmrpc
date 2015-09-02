@@ -91,9 +91,9 @@ public class Device
 
         type = reader.ReadString();
 
-        arch.Unmarshal(reader);
+        arch = ArchType.Unmarshal(reader);
 
-        oS.Unmarshal(reader);
+        oS = OSType.Unmarshal(reader);
 
         oSVersion = reader.ReadString();
 
