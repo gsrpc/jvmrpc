@@ -10,7 +10,16 @@ public class BufferReader implements Reader {
 
     private ByteBuffer content;
 
+    public BufferReader(){
+
+    }
+
     public  BufferReader(byte[] content) {
+        this.content = ByteBuffer.wrap(content);
+        this.content.order(ByteOrder.LITTLE_ENDIAN);
+    }
+
+    public void setContent(byte[] content) {
         this.content = ByteBuffer.wrap(content);
         this.content.order(ByteOrder.LITTLE_ENDIAN);
     }

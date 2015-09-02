@@ -1,16 +1,30 @@
 package com.gsrpc;
 
-public interface Callback {
+import io.netty.util.Timeout;
+
+public abstract class Callback {
+
+    private Timeout timer;
+
     /**
      * get callback timeout value
      * @return timeout duration which unit is second
      */
-    int getTimeout();
+    public abstract int getTimeout();
 
     /**
      * rpc call return handler
-     * @param e
-     * @param callReturn
+     * @param e catch exception of rpc call
+     * @param callReturn rpc result value
      */
-    void Return(Exception e,com.gsrpc.Response callReturn);
+    public abstract void Return(Exception e,com.gsrpc.Response callReturn);
+
+
+    public Timeout getTimer() {
+        return timer;
+    }
+
+    public void setTimer(Timeout timer) {
+        this.timer = timer;
+    }
 }

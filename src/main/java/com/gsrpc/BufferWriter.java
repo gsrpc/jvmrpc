@@ -12,6 +12,9 @@ public class BufferWriter implements Writer {
     }
 
 
+    public void reset() {
+        content.reset();
+    }
 
     @Override
     public void WriteByte(byte val) throws Exception {

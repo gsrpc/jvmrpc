@@ -11,6 +11,10 @@ public class NotFound extends Exception
 {
 
 
+    public NotFound() {
+    
+    }
+
 
     public void Marshal(Writer writer)  throws Exception
     {

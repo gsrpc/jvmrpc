@@ -1,6 +1,8 @@
 package com.gsrpc.net;
 
 
+import java.net.InetSocketAddress;
+
 public interface RemoteResolver {
-    Remote Resolve() throws Exception;
+    InetSocketAddress Resolve() throws Exception;
 }

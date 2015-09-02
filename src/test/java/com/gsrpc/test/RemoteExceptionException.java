@@ -7,11 +7,11 @@ import com.gsrpc.Reader;
 import java.nio.ByteBuffer;
 
 
-public class RemoteException extends Exception
+public class RemoteExceptionException extends Exception
 {
 
 
-    public RemoteException() {
+    public RemoteExceptionException() {
     
     }
 

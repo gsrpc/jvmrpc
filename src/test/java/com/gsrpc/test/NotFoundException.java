@@ -1,17 +1,17 @@
 package com.gsrpc.test;
 
+import java.nio.ByteBuffer;
+
 import com.gsrpc.Writer;
 
 import com.gsrpc.Reader;
 
-import java.nio.ByteBuffer;
 
-
-public class RemoteException extends Exception
+public class NotFoundException extends Exception
 {
 
 
-    public RemoteException() {
+    public NotFoundException() {
     
     }
 

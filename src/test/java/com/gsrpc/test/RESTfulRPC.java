@@ -28,7 +28,7 @@ public final class RESTfulRPC {
     }
 
     
-    public void Post(String arg0, byte[] arg1, final com.gsrpc.Promise<Void> promise,final int timeout) throws Exception {
+    public com.gsrpc.Future<Void> Post(String arg0, byte[] arg1, final int timeout) throws Exception {
 
         com.gsrpc.Request request = new com.gsrpc.Request();
 
@@ -70,15 +70,12 @@ public final class RESTfulRPC {
         request.setParams(params);
         
 
-        this.net.send(request,new com.gsrpc.Callback(){
-            @Override
-            public int getTimeout() {
-                return timeout;
-            }
+        com.gsrpc.Promise<Void> promise = new com.gsrpc.Promise<Void>(timeout){
             @Override
             public void Return(Exception e,com.gsrpc.Response callReturn){
+
                 if (e != null) {
-                    promise.Notify(e,null);
+                    Notify(e,null);
                     return;
                 }
 
@@ -86,48 +83,52 @@ public final class RESTfulRPC {
 
                     if(callReturn.getException() != (byte)-1) {
                         switch(callReturn.getException()) {
-                        
-                        case 0:{
+                            
+                            case 0:{
                             com.gsrpc.BufferReader reader = new com.gsrpc.BufferReader(callReturn.getContent());
 
                             RemoteException exception = new RemoteException();
 
                             exception.Unmarshal(reader);
 
-                            promise.Notify(exception,null);
+                            Notify(exception,null);
 
                             return;
                         }
                         
-                        case 1:{
+                            case 1:{
                             com.gsrpc.BufferReader reader = new com.gsrpc.BufferReader(callReturn.getContent());
 
                             NotFound exception = new NotFound();
 
                             exception.Unmarshal(reader);
 
-                            promise.Notify(exception,null);
+                            Notify(exception,null);
 
                             return;
                         }
                         
                         default:
-                            promise.Notify(new com.gsrpc.RemoteException(String.format("catch unknown exception(%d) for RESTful#Post",callReturn.getException())),null);
+                            Notify(new com.gsrpc.RemoteException(String.format("catch unknown exception(%d) for RESTful#Post",callReturn.getException())),null);
                             return;
                         }
                     }
 
                     
-                    promise.Notify(null,null);
+                    Notify(null,null);
                     
                 }catch(Exception e1) {
-                    promise.Notify(e1,null);
+                    Notify(e1,null);
                 }
             }
-        });
+        };
+
+        this.net.send(request,promise);
+
+        return promise;
     }
     
-    public void Get(String arg0, final com.gsrpc.Promise<byte[]> promise,final int timeout) throws Exception {
+    public com.gsrpc.Future<byte[]> Get(String arg0, final int timeout) throws Exception {
 
         com.gsrpc.Request request = new com.gsrpc.Request();
 
@@ -155,15 +156,12 @@ public final class RESTfulRPC {
         request.setParams(params);
         
 
-        this.net.send(request,new com.gsrpc.Callback(){
-            @Override
-            public int getTimeout() {
-                return timeout;
-            }
+        com.gsrpc.Promise<byte[]> promise = new com.gsrpc.Promise<byte[]>(timeout){
             @Override
             public void Return(Exception e,com.gsrpc.Response callReturn){
+
                 if (e != null) {
-                    promise.Notify(e,null);
+                    Notify(e,null);
                     return;
                 }
 
@@ -171,27 +169,27 @@ public final class RESTfulRPC {
 
                     if(callReturn.getException() != (byte)-1) {
                         switch(callReturn.getException()) {
-                        
-                        case 0:{
+                            
+                            case 0:{
                             com.gsrpc.BufferReader reader = new com.gsrpc.BufferReader(callReturn.getContent());
 
                             NotFound exception = new NotFound();
 
                             exception.Unmarshal(reader);
 
-                            promise.Notify(exception,null);
+                            Notify(exception,null);
 
                             return;
                         }
                         
                         default:
-                            promise.Notify(new com.gsrpc.RemoteException(String.format("catch unknown exception(%d) for RESTful#Get",callReturn.getException())),null);
+                            Notify(new com.gsrpc.RemoteException(String.format("catch unknown exception(%d) for RESTful#Get",callReturn.getException())),null);
                             return;
                         }
                     }
 
                     
-                    					byte[] returnParam = new byte[0];
+					byte[] returnParam = new byte[0];
 
 					{
 
@@ -202,13 +200,17 @@ public final class RESTfulRPC {
 					}
 
 
-                    promise.Notify(null,returnParam);
+                    Notify(null,returnParam);
                     
                 }catch(Exception e1) {
-                    promise.Notify(e1,null);
+                    Notify(e1,null);
                 }
             }
-        });
+        };
+
+        this.net.send(request,promise);
+
+        return promise;
     }
     
 }

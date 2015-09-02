@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * rpc sink handler
  */
-public class SinkHandler extends ChannelInboundHandlerAdapter implements MessageChannel{
+public class SinkHandler extends ChannelInboundHandlerAdapter implements Sink{
 
     private static final Logger logger = LoggerFactory.getLogger(SinkHandler.class);
 
@@ -40,6 +40,14 @@ public class SinkHandler extends ChannelInboundHandlerAdapter implements Message
         Executors.defaultThreadFactory();
 
         wheelTimer = new HashedWheelTimer(threadFactory);
+    }
+
+    public void registerDispatcher(short id,Dispatcher dispatcher) {
+        dispatchers.put(id,dispatcher);
+    }
+
+    public void unregisterDispatcher(short id,Dispatcher dispatcher) {
+        dispatchers.remove(id,dispatcher);
     }
 
     @Override
@@ -111,14 +119,14 @@ public class SinkHandler extends ChannelInboundHandlerAdapter implements Message
 
         final Short id = call.getID();
 
-        wheelTimer.newTimeout(new TimerTask() {
+        callback.setTimer(wheelTimer.newTimeout(new TimerTask() {
             @Override
             public void run(Timeout timeout) throws Exception {
                 if (promises.remove(id, callback)) {
                     callback.Return(new TimeoutException("rpc timeout"), null);
                 }
             }
-        }, callback.getTimeout(), TimeUnit.SECONDS);
+        }, callback.getTimeout(), TimeUnit.SECONDS));
 
         Message message = new Message();
 
@@ -152,12 +160,37 @@ public class SinkHandler extends ChannelInboundHandlerAdapter implements Message
 
         Dispatcher dispatcher = dispatchers.get(request.getService());
 
-        if (dispatcher != null) {
-
+        if (dispatcher == null) {
+            throw new InvalidContractException();
         }
+
+        Response response = dispatcher.Dispatch(request);
+
+        message.setCode(Code.Response);
+
+        BufferWriter writer = new BufferWriter();
+
+        response.Marshal(writer);
+
+        message.setContent(writer.Content());
+
+        send(message);
     }
 
     private void handleResponse(Message message) throws Exception{
+        Response response = new Response();
+
+        response.Unmarshal(new BufferReader(message.getContent()));
+
+        Callback callback = promises.remove((int) response.getID());
+
+        if(callback != null) {
+
+            callback.getTimer().cancel();
+
+            callback.Return(null,response);
+        }
+
 
     }
 }
