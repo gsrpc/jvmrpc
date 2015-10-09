@@ -1,7 +1,8 @@
-group 'com.gsrpc'
-version '1.0-SNAPSHOT'
-
 apply plugin: 'java'
+apply plugin: 'maven'
+
+group 'com.github.gsrpc'
+version '1.0-SNAPSHOT'
 
 repositories {
     maven{ url 'http://maven.oschina.net/content/groups/public/'}
