@@ -1,10 +1,10 @@
 package com.gsrpc;
 
-import com.gsrpc.Writer;
-
 import com.gsrpc.Reader;
 
 import java.nio.ByteBuffer;
+
+import com.gsrpc.Writer;
 
 
 /*
@@ -22,6 +22,8 @@ public class Device
     private  OSType oS = OSType.Windows;
 
     private  String oSVersion = "";
+
+    private  String appKey = "";
 
 
 
@@ -70,6 +72,15 @@ public class Device
         this.oSVersion = arg;
     }
 
+    public String getAppKey()
+    {
+        return this.appKey;
+    }
+    public void setAppKey(String arg)
+    {
+        this.appKey = arg;
+    }
+
     public void Marshal(Writer writer)  throws Exception
     {
 
@@ -82,6 +93,8 @@ public class Device
         oS.Marshal(writer);
 
         writer.WriteString(oSVersion);
+
+        writer.WriteString(appKey);
 
     }
     public void Unmarshal(Reader reader) throws Exception
@@ -96,6 +109,8 @@ public class Device
         oS = OSType.Unmarshal(reader);
 
         oSVersion = reader.ReadString();
+
+        appKey = reader.ReadString();
 
     }
 }

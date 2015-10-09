@@ -10,8 +10,7 @@
 
     "properties":{
         "gsrpc":{
-            "main":["github.com/gsrpc/gsrpc"],
-            "test":["github.com/gsrpc/gsrpc/test/test.gs"]
+            "main":["github.com/gsrpc/gsrpc"]
         },
 
         "jvmrpc":{

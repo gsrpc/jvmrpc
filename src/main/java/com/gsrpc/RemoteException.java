@@ -1,19 +1,20 @@
 package com.gsrpc;
 
+import com.gsrpc.Writer;
+
 import com.gsrpc.Reader;
 
 import java.nio.ByteBuffer;
-
-import com.gsrpc.Writer;
 
 
 public class RemoteException extends Exception
 {
 
 
-    public RemoteException(String message) {
-        super(message);
+    public RemoteException() {
+    
     }
+
 
     public void Marshal(Writer writer)  throws Exception
     {
