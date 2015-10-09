@@ -1,149 +1,129 @@
 package com.gsrpc.net;
 
-import com.gsrpc.*;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.*;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 
 import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * gsrpc tcp client
+ * The {@link TCPClient} builder
  */
-public final class TCPClient implements Reconnect,Sink {
+public final class TCPClientBuilder {
 
-    private static final Logger logger = LoggerFactory.getLogger(TCPClient.class);
+    private final Bootstrap bootstrap = new Bootstrap();
 
-    private final Bootstrap bootstrap;
+    private ChannelInitializer<SocketChannel> handler;
 
     private final RemoteResolver resolver;
 
-    private AtomicReference<State> state = new AtomicReference<State>(State.Disconnect);
+    private int relay = -1;
 
-    private AtomicReference<Sink> channel = new AtomicReference<Sink>(null);
+    private TimeUnit unit;
 
-    private final ConcurrentHashMap<Short,Dispatcher> dispatchers = new ConcurrentHashMap<Short, Dispatcher>();
+    private EventLoopGroup eventLoopGroup;
 
-    TCPClient(Bootstrap bootstrap, RemoteResolver resolver) {
+    private ThreadFactory threadFactory = Executors.defaultThreadFactory();
 
-        this.bootstrap = bootstrap;
+    public TCPClientBuilder(RemoteResolver resolver) {
 
         this.resolver = resolver;
+
+        bootstrap.channel(NioSocketChannel.class);
     }
 
-    public void connect() throws Exception {
+    public TCPClientBuilder group(EventLoopGroup group) {
 
-        if (!state.compareAndSet(State.Disconnect, State.Connecting)) {
-            return;
-        }
+        eventLoopGroup = group;
 
-        bootstrap.remoteAddress(resolver.Resolve());
-
-        bootstrap.connect();
-    }
-
-
-    public void close() {
-        state.set(State.Closed);
-
-        bootstrap.group().shutdownGracefully();
+        return this;
     }
 
 
-    void setSink(Sink sink) {
-
-        for(ConcurrentHashMap.Entry<Short,Dispatcher> dispatcher: dispatchers.entrySet()) {
-            sink.registerDispatcher(dispatcher.getKey(),dispatcher.getValue());
-        }
-
-        this.channel.set(sink);
+    public TCPClientBuilder threadFactory(ThreadFactory threadFactory) {
+        this.threadFactory = threadFactory;
+        return this;
     }
 
 
-    @Override
-    public void reconnect(final long relay, final TimeUnit unit) {
+    public TCPClientBuilder option(ChannelOption option, boolean flag) {
+        bootstrap.option(option, flag);
+        return this;
+    }
 
-        if (!state.compareAndSet(State.Disconnect, State.Connecting)) {
-            return;
+    public TCPClientBuilder handler(ChannelInitializer<SocketChannel> handler) {
+
+        this.handler = handler;
+
+        return this;
+    }
+
+    public TCPClientBuilder reconnect(int relay, TimeUnit unit) {
+        this.relay = relay;
+        this.unit = unit;
+        return this;
+    }
+
+    public TCPClient Build() throws Exception {
+
+        final TCPClient client = new TCPClient(bootstrap, resolver);
+
+
+        if (eventLoopGroup == null) {
+            eventLoopGroup = new NioEventLoopGroup();
         }
 
-        try {
+        bootstrap.group(eventLoopGroup);
 
-            bootstrap.remoteAddress(resolver.Resolve());
+        bootstrap.handler(new ChannelInitializer<SocketChannel>() {
 
-        } catch (Exception e) {
-            logger.error("resolver remote address error", e);
 
-            if (state.compareAndSet(State.Connecting, State.Disconnect)) {
-                bootstrap.group().schedule(new Runnable() {
-                    @Override
-                    public void run() {
-                        reconnect(relay, unit);
-                    }
-                }, relay, unit);
-            }
-        }
-
-        bootstrap.connect().addListener(new ChannelFutureListener() {
             @Override
-            public void operationComplete(ChannelFuture future) throws Exception {
-                if (!future.isSuccess()) {
+            protected void initChannel(SocketChannel ch) throws Exception {
 
-                    if (state.compareAndSet(State.Connecting, State.Disconnect)) {
-                        future.channel().eventLoop().schedule(new Runnable() {
-                            @Override
-                            public void run() {
-                                reconnect(relay, unit);
-                            }
-                        }, relay, unit);
-                    }
+                ch.pipeline().addLast(new LoggingHandler(LogLevel.TRACE));
 
+                ch.pipeline().addLast(new MessageInHandler(), new MessageOutHandler());
 
-                } else {
-                    if (!state.compareAndSet(State.Connecting, State.Connected)) {
-                        future.channel().close();
-                    }
+                if (relay != -1) {
+                    ch.pipeline().addLast(new ReconnectHandler(client, relay, unit));
                 }
+
+                if (handler != null) {
+                    ch.pipeline().addLast(handler);
+                }
+
+                ch.pipeline().addLast(new ChannelInitializer<SocketChannel>() {
+                    @Override
+                    protected void initChannel(SocketChannel ch) throws Exception {
+
+                        SinkHandler handler = new SinkHandler(threadFactory);
+
+                        ch.pipeline().addLast(handler);
+
+                        client.setSink(handler);
+                    }
+                });
             }
         });
-    }
 
-    @Override
-    public void send(Message message) throws Exception {
-        MessageChannel messageChannel = channel.get();
-
-        if(messageChannel == null) {
-            throw new BrokenChannel();
+        if (relay != -1) {
+            client.reconnect(relay, unit);
+        } else {
+            client.connect();
         }
 
-        messageChannel.send(message);
-    }
-
-    @Override
-    public void send(Request call, Callback callback) throws Exception {
-        MessageChannel messageChannel = channel.get();
-
-        if(messageChannel == null) {
-            throw new BrokenChannel();
-        }
-
-        messageChannel.send(call, callback);
-    }
-
-    @Override
-    public void registerDispatcher(short id, Dispatcher dispatcher) {
-        dispatchers.put(id, dispatcher);
-    }
-
-    @Override
-    public void unregisterDispatcher(short id, Dispatcher dispatcher) {
-        dispatchers.remove(id, dispatcher);
+        return client;
     }
 }
