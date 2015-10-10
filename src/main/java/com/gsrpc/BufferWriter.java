@@ -83,7 +83,7 @@ public class BufferWriter implements Writer {
     }
 
     @Override
-    public void WriteUint64(long val) throws Exception {
+    public void WriteUInt64(long val) throws Exception {
         content.write((byte) (val & 0xff));
 
         content.write((byte) ((val >> 8) & 0xff));

@@ -19,7 +19,7 @@ public interface Writer
 
     void WriteInt64(long val) throws Exception;
 
-    void WriteUint64(long val) throws Exception;
+    void WriteUInt64(long val) throws Exception;
 
     void WriteFloat32(float val) throws Exception;
 
