@@ -60,7 +60,7 @@ public class BufferReader implements Reader {
     }
 
     @Override
-    public long ReadUint64() throws Exception {
+    public long ReadUInt64() throws Exception {
         return content.getLong();
     }
 

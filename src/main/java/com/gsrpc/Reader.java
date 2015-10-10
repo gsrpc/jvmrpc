@@ -19,7 +19,7 @@ public interface Reader {
 
     long ReadInt64() throws Exception;
 
-    long ReadUint64() throws Exception;
+    long ReadUInt64() throws Exception;
 
     float ReadFloat32() throws Exception;
 
