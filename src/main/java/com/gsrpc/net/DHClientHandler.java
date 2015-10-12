@@ -91,7 +91,9 @@ public class DHClientHandler extends MessageToMessageCodec<Message, Message> {
             return;
         }
 
-        message.setContent(encoder.doFinal(message.getContent()));
+        if (message.getContent() != null && message.getContent().length != 0) {
+            message.setContent(encoder.doFinal(message.getContent()));
+        }
 
         list.add(message);
 

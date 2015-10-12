@@ -46,6 +46,7 @@ public final class TCPClientBuilder {
     public TCPClientBuilder group(EventLoopGroup group) {
 
         eventLoopGroup = group;
+        bootstrap.group(eventLoopGroup);
 
         return this;
     }
@@ -82,9 +83,8 @@ public final class TCPClientBuilder {
 
         if (eventLoopGroup == null) {
             eventLoopGroup = new NioEventLoopGroup();
+            bootstrap.group(eventLoopGroup);
         }
-
-        bootstrap.group(eventLoopGroup);
 
         bootstrap.handler(new ChannelInitializer<SocketChannel>() {
 
