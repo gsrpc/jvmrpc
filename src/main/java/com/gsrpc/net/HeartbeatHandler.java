@@ -5,6 +5,9 @@ import com.gsrpc.Message;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.util.HashedWheelTimer;
+import io.netty.util.Timeout;
+import io.netty.util.TimerTask;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -14,6 +17,11 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class HeartbeatHandler extends ChannelInboundHandlerAdapter {
 
+    /**
+     * the heartbeat wheel timer singlton
+     */
+    private static final HashedWheelTimer wheelTimer = new HashedWheelTimer();
+
     private final long relay;
 
 
@@ -21,6 +29,7 @@ public class HeartbeatHandler extends ChannelInboundHandlerAdapter {
 
 
     private final AtomicReference<Channel> channelRef = new AtomicReference<io.netty.channel.Channel>(null);
+
 
     private final Message heartbeat = new Message();
 
@@ -64,16 +73,19 @@ public class HeartbeatHandler extends ChannelInboundHandlerAdapter {
 
     private void sendHeartbeat(){
 
+
         final Channel channel = channelRef.get();
 
         if(channel != null) {
-            channel.eventLoop().scheduleWithFixedDelay(new Runnable() {
+            wheelTimer.newTimeout(new TimerTask() {
                 @Override
-                public void run() {
+                public void run(Timeout timeout) throws Exception {
 
                     channel.writeAndFlush(heartbeat);
+
+                    sendHeartbeat();
                 }
-            },0,this.relay,this.unit);
+            }, this.relay, this.unit);
         }
     }
 }
