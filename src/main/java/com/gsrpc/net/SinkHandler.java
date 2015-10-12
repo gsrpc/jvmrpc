@@ -19,7 +19,7 @@ public class SinkHandler extends ChannelInboundHandlerAdapter implements Sink{
 
     private static final Logger logger = LoggerFactory.getLogger(SinkHandler.class);
 
-    private final HashedWheelTimer wheelTimer;
+    private static final HashedWheelTimer wheelTimer = new HashedWheelTimer();
 
     private final ConcurrentHashMap<Integer, Callback> promises = new ConcurrentHashMap<Integer, Callback>();
 
@@ -36,10 +36,6 @@ public class SinkHandler extends ChannelInboundHandlerAdapter implements Sink{
      *                       {@link TimerTask} execution.
      */
     public SinkHandler(ThreadFactory threadFactory) {
-
-        Executors.defaultThreadFactory();
-
-        wheelTimer = new HashedWheelTimer(threadFactory);
     }
 
     public void registerDispatcher(short id,Dispatcher dispatcher) {

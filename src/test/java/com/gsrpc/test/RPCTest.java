@@ -33,7 +33,7 @@ public class RPCTest {
         TCPClientBuilder builder = new TCPClientBuilder(new RemoteResolver() {
             @Override
             public InetSocketAddress Resolve() throws Exception {
-                return new InetSocketAddress("localhost", 13516);
+                return new InetSocketAddress("10.0.0.210", 13516);
             }
         }).handler(new ChannelInitializer<SocketChannel>() {
             @Override
@@ -54,7 +54,7 @@ public class RPCTest {
         }).reconnect(2, java.util.concurrent.TimeUnit.SECONDS);
 
 
-        for(int i = 0; i < 100; i ++ ) {
+        for(int i = 0; i < 2000; i ++ ) {
             builder.Build();
         }
 
