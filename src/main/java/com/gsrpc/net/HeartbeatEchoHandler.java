@@ -6,8 +6,8 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.HashedWheelTimer;
-import io.netty.util.Timeout;
-import io.netty.util.TimerTask;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -15,7 +15,9 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * heartbeat handler
  */
-public class HeartbeatHandler extends ChannelInboundHandlerAdapter {
+public class HeartbeatEchoHandler extends ChannelInboundHandlerAdapter {
+
+    private static final Logger logger = LoggerFactory.getLogger(HeartbeatEchoHandler.class);
 
     /**
      * the heartbeat wheel timer singlton
@@ -30,28 +32,16 @@ public class HeartbeatHandler extends ChannelInboundHandlerAdapter {
 
     private final AtomicReference<Channel> channelRef = new AtomicReference<io.netty.channel.Channel>(null);
 
-
-    private final Message heartbeat = new Message();
-
     /**
      * create new reconnect handler for netty
      *
      * @param relay     relay time for heartbeat action
      * @param unit      time unit
      */
-    public HeartbeatHandler(long relay, TimeUnit unit) {
+    public HeartbeatEchoHandler(long relay, TimeUnit unit) {
 
         this.relay = relay;
         this.unit = unit;
-
-        heartbeat.setCode(Code.Heartbeat);
-    }
-
-    @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        channelRef.set(ctx.channel());
-
-        sendHeartbeat();
     }
 
     @Override
@@ -69,23 +59,7 @@ public class HeartbeatHandler extends ChannelInboundHandlerAdapter {
         if(message.getCode() != Code.Heartbeat) {
             ctx.fireChannelRead(msg);
         }
-    }
 
-    private void sendHeartbeat(){
-
-
-        final Channel channel = channelRef.get();
-
-        if(channel != null) {
-            wheelTimer.newTimeout(new TimerTask() {
-                @Override
-                public void run(Timeout timeout) throws Exception {
-
-                    channel.writeAndFlush(heartbeat);
-
-                    sendHeartbeat();
-                }
-            }, this.relay, this.unit);
-        }
+        ctx.channel().writeAndFlush(msg);
     }
 }

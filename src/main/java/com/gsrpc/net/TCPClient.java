@@ -107,12 +107,23 @@ public final class TCPClient implements Reconnect,Sink {
 
 
                 } else {
+
                     if (!state.compareAndSet(State.Connecting, State.Connected)) {
                         future.channel().close();
                     }
+
+
+                    future.channel().closeFuture().addListener(new ChannelFutureListener() {
+                        @Override
+                        public void operationComplete(ChannelFuture future) throws Exception {
+                            state.set(State.Disconnect);
+                        }
+                    });
                 }
             }
         });
+
+
     }
 
     @Override

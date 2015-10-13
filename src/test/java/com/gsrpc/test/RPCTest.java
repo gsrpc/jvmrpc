@@ -11,6 +11,7 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 
 import java.math.BigInteger;
 import java.net.InetSocketAddress;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -22,7 +23,7 @@ public class RPCTest {
     private Device createDevice() {
         Device device = new Device();
 
-        device.setID(String.format("%d",id.getAndAdd(1)));
+        device.setID(UUID.randomUUID().toString());
 
         return device;
     }
@@ -33,11 +34,14 @@ public class RPCTest {
         TCPClientBuilder builder = new TCPClientBuilder(new RemoteResolver() {
             @Override
             public InetSocketAddress Resolve() throws Exception {
-                return new InetSocketAddress("localhost", 13516);
+                return new InetSocketAddress("10.0.0.210", 13516);
             }
         }).handler(new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel socketChannel) throws Exception {
+
+                socketChannel.pipeline().addLast(new ProfileHandler());
+
                 socketChannel.pipeline().addLast(new DHClientHandler(createDevice(), new DHKeyResolver() {
                     @Override
                     public DHKey resolver(Device device) throws Exception {
@@ -48,18 +52,20 @@ public class RPCTest {
                     }
                 }));
 
-                socketChannel.pipeline().addLast(new HeartbeatHandler(5, TimeUnit.SECONDS));
+                socketChannel.pipeline().addLast(new HeartbeatEchoHandler(5, TimeUnit.SECONDS));
 
             }
         }).reconnect(2, java.util.concurrent.TimeUnit.SECONDS);
 
 
-        for(int i = 0; i < 20000; i ++ ) {
+        for(int i = 0; i < 1000; i ++ ) {
             builder.Build();
         }
 
-        synchronized (this){
-            this.wait();
+        while(true){
+            Thread.sleep(2000);
+
+            System.out.println(ProfileHandler.printProfile());
         }
     }
 }
