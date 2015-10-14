@@ -19,7 +19,7 @@ public class Request
 
     private  short service = 0;
 
-    private  com.gsrpc.Param[] params = new com.gsrpc.Param[0];
+    private  Param[] params = new Param[0];
 
 
 
@@ -50,11 +50,11 @@ public class Request
         this.service = arg;
     }
 
-    public com.gsrpc.Param[] getParams()
+    public Param[] getParams()
     {
         return this.params;
     }
-    public void setParams(com.gsrpc.Param[] arg)
+    public void setParams(Param[] arg)
     {
         this.params = arg;
     }
@@ -70,7 +70,7 @@ public class Request
 
         writer.WriteUInt16((short)params.length);
 
-		for(com.gsrpc.Param v3 : params){
+		for(Param v3 : params){
 
 			v3.Marshal(writer);
 
@@ -88,11 +88,11 @@ public class Request
 
         int max3 = reader.ReadUInt16();
 
-		params = new com.gsrpc.Param[max3];
+		params = new Param[max3];
 
 		for(int i3 = 0; i3 < max3; i3 ++ ){
 
-			com.gsrpc.Param v3 = new com.gsrpc.Param();
+			Param v3 = new Param();
 
 			v3.Unmarshal(reader);
 

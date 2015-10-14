@@ -1,10 +1,10 @@
 package com.gsrpc;
 
-import com.gsrpc.Writer;
-
 import com.gsrpc.Reader;
 
 import java.nio.ByteBuffer;
+
+import com.gsrpc.Writer;
 
 
 /*
@@ -13,26 +13,26 @@ import java.nio.ByteBuffer;
 public class Tunnel
 {
 
-    private  com.gsrpc.Device iD = new com.gsrpc.Device();
+    private  Device iD = new Device();
 
-    private  com.gsrpc.Message message = new com.gsrpc.Message();
+    private  Message message = new Message();
 
 
 
-    public com.gsrpc.Device getID()
+    public Device getID()
     {
         return this.iD;
     }
-    public void setID(com.gsrpc.Device arg)
+    public void setID(Device arg)
     {
         this.iD = arg;
     }
 
-    public com.gsrpc.Message getMessage()
+    public Message getMessage()
     {
         return this.message;
     }
-    public void setMessage(com.gsrpc.Message arg)
+    public void setMessage(Message arg)
     {
         this.message = arg;
     }

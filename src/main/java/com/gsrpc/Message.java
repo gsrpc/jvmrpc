@@ -13,7 +13,7 @@ import java.nio.ByteBuffer;
 public class Message
 {
 
-    private  com.gsrpc.Code code = com.gsrpc.Code.Heartbeat;
+    private  Code code = Code.Heartbeat;
 
     private  byte agent = 0;
 
@@ -21,11 +21,11 @@ public class Message
 
 
 
-    public com.gsrpc.Code getCode()
+    public Code getCode()
     {
         return this.code;
     }
-    public void setCode(com.gsrpc.Code arg)
+    public void setCode(Code arg)
     {
         this.code = arg;
     }
@@ -61,7 +61,7 @@ public class Message
     public void Unmarshal(Reader reader) throws Exception
     {
 
-        code = com.gsrpc.Code.Unmarshal(reader);
+        code = Code.Unmarshal(reader);
 
         agent = reader.ReadByte();
 
