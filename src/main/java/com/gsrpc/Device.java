@@ -1,10 +1,10 @@
 package com.gsrpc;
 
-import com.gsrpc.Reader;
-
 import java.nio.ByteBuffer;
 
 import com.gsrpc.Writer;
+
+import com.gsrpc.Reader;
 
 
 /*
@@ -17,9 +17,9 @@ public class Device
 
     private  String type = "";
 
-    private  ArchType arch = ArchType.X86;
+    private  com.gsrpc.ArchType arch = com.gsrpc.ArchType.X86;
 
-    private  OSType oS = OSType.Windows;
+    private  com.gsrpc.OSType oS = com.gsrpc.OSType.Windows;
 
     private  String oSVersion = "";
 
@@ -45,20 +45,20 @@ public class Device
         this.type = arg;
     }
 
-    public ArchType getArch()
+    public com.gsrpc.ArchType getArch()
     {
         return this.arch;
     }
-    public void setArch(ArchType arg)
+    public void setArch(com.gsrpc.ArchType arg)
     {
         this.arch = arg;
     }
 
-    public OSType getOS()
+    public com.gsrpc.OSType getOS()
     {
         return this.oS;
     }
-    public void setOS(OSType arg)
+    public void setOS(com.gsrpc.OSType arg)
     {
         this.oS = arg;
     }
@@ -104,9 +104,9 @@ public class Device
 
         type = reader.ReadString();
 
-        arch = ArchType.Unmarshal(reader);
+        arch = com.gsrpc.ArchType.Unmarshal(reader);
 
-        oS = OSType.Unmarshal(reader);
+        oS = com.gsrpc.OSType.Unmarshal(reader);
 
         oSVersion = reader.ReadString();
 

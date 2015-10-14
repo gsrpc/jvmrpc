@@ -1,10 +1,10 @@
 package com.gsrpc;
 
+import com.gsrpc.Writer;
+
 import com.gsrpc.Reader;
 
 import java.nio.ByteBuffer;
-
-import com.gsrpc.Writer;
 
 
 /*
@@ -19,7 +19,7 @@ public class Request
 
     private  short service = 0;
 
-    private  Param[] params = new Param[0];
+    private  com.gsrpc.Param[] params = new com.gsrpc.Param[0];
 
 
 
@@ -50,11 +50,11 @@ public class Request
         this.service = arg;
     }
 
-    public Param[] getParams()
+    public com.gsrpc.Param[] getParams()
     {
         return this.params;
     }
-    public void setParams(Param[] arg)
+    public void setParams(com.gsrpc.Param[] arg)
     {
         this.params = arg;
     }
@@ -70,7 +70,7 @@ public class Request
 
         writer.WriteUInt16((short)params.length);
 
-		for(Param v3 : params){
+		for(com.gsrpc.Param v3 : params){
 
 			v3.Marshal(writer);
 
@@ -88,11 +88,11 @@ public class Request
 
         int max3 = reader.ReadUInt16();
 
-		params = new Param[max3];
+		params = new com.gsrpc.Param[max3];
 
 		for(int i3 = 0; i3 < max3; i3 ++ ){
 
-			Param v3 = new Param();
+			com.gsrpc.Param v3 = new com.gsrpc.Param();
 
 			v3.Unmarshal(reader);
 

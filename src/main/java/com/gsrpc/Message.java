@@ -1,10 +1,10 @@
 package com.gsrpc;
 
+import com.gsrpc.Writer;
+
 import com.gsrpc.Reader;
 
 import java.nio.ByteBuffer;
-
-import com.gsrpc.Writer;
 
 
 /*
@@ -13,7 +13,7 @@ import com.gsrpc.Writer;
 public class Message
 {
 
-    private  Code code = Code.Heartbeat;
+    private  com.gsrpc.Code code = com.gsrpc.Code.Heartbeat;
 
     private  byte agent = 0;
 
@@ -21,11 +21,11 @@ public class Message
 
 
 
-    public Code getCode()
+    public com.gsrpc.Code getCode()
     {
         return this.code;
     }
-    public void setCode(Code arg)
+    public void setCode(com.gsrpc.Code arg)
     {
         this.code = arg;
     }
@@ -61,7 +61,7 @@ public class Message
     public void Unmarshal(Reader reader) throws Exception
     {
 
-        code = Code.Unmarshal(reader);
+        code = com.gsrpc.Code.Unmarshal(reader);
 
         agent = reader.ReadByte();
 

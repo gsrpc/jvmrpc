@@ -13,26 +13,26 @@ import java.nio.ByteBuffer;
 public class Tunnel
 {
 
-    private  Device iD = new Device();
+    private  com.gsrpc.Device iD = new com.gsrpc.Device();
 
-    private  Message message = new Message();
+    private  com.gsrpc.Message message = new com.gsrpc.Message();
 
 
 
-    public Device getID()
+    public com.gsrpc.Device getID()
     {
         return this.iD;
     }
-    public void setID(Device arg)
+    public void setID(com.gsrpc.Device arg)
     {
         this.iD = arg;
     }
 
-    public Message getMessage()
+    public com.gsrpc.Message getMessage()
     {
         return this.message;
     }
-    public void setMessage(Message arg)
+    public void setMessage(com.gsrpc.Message arg)
     {
         this.message = arg;
     }
