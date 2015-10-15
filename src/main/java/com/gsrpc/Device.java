@@ -81,36 +81,36 @@ public class Device
         this.appKey = arg;
     }
 
-    public void Marshal(Writer writer)  throws Exception
+    public void marshal(Writer writer)  throws Exception
     {
 
-        writer.WriteString(iD);
+        writer.writeString(iD);
 
-        writer.WriteString(type);
+        writer.writeString(type);
 
-        arch.Marshal(writer);
+        arch.marshal(writer);
 
-        oS.Marshal(writer);
+        oS.marshal(writer);
 
-        writer.WriteString(oSVersion);
+        writer.writeString(oSVersion);
 
-        writer.WriteString(appKey);
+        writer.writeString(appKey);
 
     }
-    public void Unmarshal(Reader reader) throws Exception
+    public void unmarshal(Reader reader) throws Exception
     {
 
-        iD = reader.ReadString();
+        iD = reader.readString();
 
-        type = reader.ReadString();
+        type = reader.readString();
 
-        arch = ArchType.Unmarshal(reader);
+        arch = ArchType.unmarshal(reader);
 
-        oS = OSType.Unmarshal(reader);
+        oS = OSType.unmarshal(reader);
 
-        oSVersion = reader.ReadString();
+        oSVersion = reader.readString();
 
-        appKey = reader.ReadString();
+        appKey = reader.readString();
 
     }
 }

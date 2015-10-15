@@ -2,14 +2,11 @@ package com.gsrpc.net;
 
 import com.gsrpc.*;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.*;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -17,7 +14,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * gsrpc tcp client
  */
-public final class TCPClient implements Reconnect,Sink {
+public final class TCPClient implements Reconnect,Sink,StateListener {
 
     private static final Logger logger = LoggerFactory.getLogger(TCPClient.class);
 
@@ -25,28 +22,53 @@ public final class TCPClient implements Reconnect,Sink {
 
     private final RemoteResolver resolver;
 
+    private final int relay;
+
+    private final TimeUnit unit;
+
     private AtomicReference<State> state = new AtomicReference<State>(State.Disconnect);
 
     private AtomicReference<Sink> channel = new AtomicReference<Sink>(null);
 
     private final ConcurrentHashMap<Short,Dispatcher> dispatchers = new ConcurrentHashMap<Short, Dispatcher>();
 
-    TCPClient(Bootstrap bootstrap, RemoteResolver resolver) {
+    private final Promise<Void> connected = new Promise<Void>(0) {
+        @Override
+        public void Return(Exception e, Response callReturn) {
+            this.Notify(e,null);
+        }
+    };
+
+    private final Promise<Void> closed = new Promise<Void>(0) {
+        @Override
+        public void Return(Exception e, Response callReturn) {
+            this.Notify(e,null);
+        }
+    };
+
+    TCPClient(Bootstrap bootstrap, RemoteResolver resolver, int relay, TimeUnit unit) {
 
         this.bootstrap = bootstrap;
 
         this.resolver = resolver;
+        this.relay = relay;
+        this.unit = unit;
     }
 
     public void connect() throws Exception {
 
-        if (!state.compareAndSet(State.Disconnect, State.Connecting)) {
-            return;
-        }
-
         bootstrap.remoteAddress(resolver.Resolve());
 
-        bootstrap.connect();
+        if (relay == -1) {
+
+            if (!state.compareAndSet(State.Disconnect, State.Connecting)) {
+                throw new Exception("");
+            }
+
+            bootstrap.connect();
+        } else {
+            reconnect();
+        }
     }
 
 
@@ -68,10 +90,10 @@ public final class TCPClient implements Reconnect,Sink {
 
 
     @Override
-    public void reconnect(final long relay, final TimeUnit unit) {
+    public void reconnect() throws Exception {
 
         if (!state.compareAndSet(State.Disconnect, State.Connecting)) {
-            return;
+            throw new Exception("already connected");
         }
 
         try {
@@ -85,7 +107,11 @@ public final class TCPClient implements Reconnect,Sink {
                 bootstrap.group().schedule(new Runnable() {
                     @Override
                     public void run() {
-                        reconnect(relay, unit);
+                        try {
+                            reconnect();
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                        }
                     }
                 }, relay, unit);
             }
@@ -100,7 +126,11 @@ public final class TCPClient implements Reconnect,Sink {
                         future.channel().eventLoop().schedule(new Runnable() {
                             @Override
                             public void run() {
-                                reconnect(relay, unit);
+                                try {
+                                    reconnect();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }, relay, unit);
                     }
@@ -148,6 +178,16 @@ public final class TCPClient implements Reconnect,Sink {
         messageChannel.send(call, callback);
     }
 
+
+    public Future<Void> connected() {
+        return this.connected;
+    }
+
+
+    public Future<Void> closed() {
+        return this.closed;
+    }
+
     @Override
     public void registerDispatcher(short id, Dispatcher dispatcher) {
         dispatchers.put(id, dispatcher);
@@ -156,5 +196,18 @@ public final class TCPClient implements Reconnect,Sink {
     @Override
     public void unregisterDispatcher(short id, Dispatcher dispatcher) {
         dispatchers.remove(id, dispatcher);
+    }
+
+    @Override
+    public void stateChanged(State state) {
+        switch (state){
+
+            case Connected:
+                this.connected.Notify(null,null);
+                break;
+            case Closed:
+                this.closed.Notify(null,null);
+                break;
+        }
     }
 }

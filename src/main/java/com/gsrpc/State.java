@@ -46,13 +46,13 @@ public enum State {
     public byte getValue() {
         return this.value;
     }
-    public void Marshal(Writer writer) throws Exception
+    public void marshal(Writer writer) throws Exception
     {
-         writer.WriteByte(getValue()); 
+         writer.writeByte(getValue()); 
     }
-    public static State Unmarshal(Reader reader) throws Exception
+    public static State unmarshal(Reader reader) throws Exception
     {
-        byte code =   reader.ReadByte(); 
+        byte code =   reader.readByte(); 
         switch(code)
         {
         

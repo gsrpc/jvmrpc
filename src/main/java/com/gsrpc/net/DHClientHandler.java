@@ -59,7 +59,7 @@ public class DHClientHandler extends MessageToMessageCodec<Message, Message> {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
 
-        super.channelActive(ctx);
+        //super.channelActive(ctx);
 
         WhoAmI whoAmI = new WhoAmI();
 
@@ -77,7 +77,7 @@ public class DHClientHandler extends MessageToMessageCodec<Message, Message> {
 
         BufferWriter writer = new BufferWriter();
 
-        whoAmI.Marshal(writer);
+        whoAmI.marshal(writer);
 
         message.setContent(writer.Content());
 
@@ -118,17 +118,19 @@ public class DHClientHandler extends MessageToMessageCodec<Message, Message> {
 
             buff.putLong(sharedKey);
 
-            encoder = Cipher.getInstance("DES/ECB/PKCS5Padding");
-
             DESKeySpec dks = new DESKeySpec(buff.array());
 
             SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
+
+            encoder = Cipher.getInstance("DES/ECB/PKCS5Padding");
 
             encoder.init(Cipher.ENCRYPT_MODE, keyFactory.generateSecret(dks), new SecureRandom());
 
             decoder = Cipher.getInstance("DES/ECB/PKCS5Padding");
 
             decoder.init(Cipher.DECRYPT_MODE, keyFactory.generateSecret(dks), new SecureRandom());
+
+            channelHandlerContext.fireChannelActive();
 
             return;
         }

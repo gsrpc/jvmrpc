@@ -26,16 +26,16 @@ public class Param
         this.content = arg;
     }
 
-    public void Marshal(Writer writer)  throws Exception
+    public void marshal(Writer writer)  throws Exception
     {
 
-        writer.WriteBytes(content);
+        writer.writeBytes(content);
 
     }
-    public void Unmarshal(Reader reader) throws Exception
+    public void unmarshal(Reader reader) throws Exception
     {
 
-        content = reader.ReadBytes();
+        content = reader.readBytes();
 
     }
 }

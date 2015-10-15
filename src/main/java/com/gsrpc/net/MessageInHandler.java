@@ -47,7 +47,7 @@ public final class MessageInHandler extends ByteToMessageDecoder {
 
             reader.setContent(buff);
 
-            length = reader.ReadUInt16() & 0xffff;
+            length = reader.readUInt16() & 0xffff;
 
             logger.trace("try receive message({})",length);
         }
@@ -65,7 +65,7 @@ public final class MessageInHandler extends ByteToMessageDecoder {
 
         reader.setContent(buff);
 
-        message.Unmarshal(reader);
+        message.unmarshal(reader);
 
         out.add(message);
 

@@ -68,7 +68,7 @@ public class DHServerHandler extends MessageToMessageCodec<Message, Message> {
 
             WhoAmI whoAmI = new WhoAmI();
 
-            whoAmI.Unmarshal(reader);
+            whoAmI.unmarshal(reader);
 
             DHKey dhKey = resolver.resolver(whoAmI.getID());
 

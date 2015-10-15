@@ -1,10 +1,10 @@
 package com.gsrpc;
 
-import java.nio.ByteBuffer;
-
 import com.gsrpc.Writer;
 
 import com.gsrpc.Reader;
+
+import java.nio.ByteBuffer;
 
 
 public class InvalidContractException extends Exception
@@ -16,11 +16,11 @@ public class InvalidContractException extends Exception
     }
 
 
-    public void Marshal(Writer writer)  throws Exception
+    public void marshal(Writer writer)  throws Exception
     {
 
     }
-    public void Unmarshal(Reader reader) throws Exception
+    public void unmarshal(Reader reader) throws Exception
     {
 
     }

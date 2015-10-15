@@ -5,32 +5,32 @@ package com.gsrpc;
  */
 public interface Writer
 {
-    void WriteByte(byte val) throws Exception;
+    void writeByte(byte val) throws Exception;
 
-    void WriteSByte(byte val) throws Exception;
+    void writeSByte(byte val) throws Exception;
 
-    void WriteInt16(short val) throws Exception;
+    void writeInt16(short val) throws Exception;
 
-    void WriteUInt16(short val) throws Exception;
+    void writeUInt16(short val) throws Exception;
 
-    void WriteInt32(int val) throws Exception;
+    void writeInt32(int val) throws Exception;
 
-    void WriteUInt32(int val) throws Exception;
+    void writeUInt32(int val) throws Exception;
 
-    void WriteInt64(long val) throws Exception;
+    void writeInt64(long val) throws Exception;
 
-    void WriteUInt64(long val) throws Exception;
+    void writeUInt64(long val) throws Exception;
 
-    void WriteFloat32(float val) throws Exception;
+    void writeFloat32(float val) throws Exception;
 
-    void WriteFloat64(double val) throws Exception;
+    void writeFloat64(double val) throws Exception;
 
-    void WriteString(String val) throws Exception;
+    void writeString(String val) throws Exception;
 
-    void WriteArrayBytes(byte[] val) throws Exception;
+    void writeArrayBytes(byte[] val) throws Exception;
 
-    void WriteBytes(byte[] val) throws Exception;
+    void writeBytes(byte[] val) throws Exception;
 
-    void WriteBoolean(boolean val) throws Exception;
+    void writeBoolean(boolean val) throws Exception;
 
 }

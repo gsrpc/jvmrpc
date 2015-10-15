@@ -6,8 +6,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 
-import java.nio.ByteOrder;
-
 
 /**
  * rpc message out handler
@@ -23,13 +21,13 @@ public class MessageOutHandler extends MessageToByteEncoder<Message> {
 
         writer.reset();
 
-        msg.Marshal(writer);
+        msg.marshal(writer);
 
         byte[] content = writer.Content();
 
         writer.reset();
 
-        writer.WriteUInt16((short)(content.length & 0xffff));
+        writer.writeUInt16((short) (content.length & 0xffff));
 
         out.writeBytes(writer.Content());
 

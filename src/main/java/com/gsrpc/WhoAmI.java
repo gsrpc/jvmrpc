@@ -1,10 +1,10 @@
 package com.gsrpc;
 
-import com.gsrpc.Writer;
-
 import com.gsrpc.Reader;
 
 import java.nio.ByteBuffer;
+
+import com.gsrpc.Writer;
 
 
 /*
@@ -37,20 +37,20 @@ public class WhoAmI
         this.context = arg;
     }
 
-    public void Marshal(Writer writer)  throws Exception
+    public void marshal(Writer writer)  throws Exception
     {
 
-        iD.Marshal(writer);
+        iD.marshal(writer);
 
-        writer.WriteBytes(context);
+        writer.writeBytes(context);
 
     }
-    public void Unmarshal(Reader reader) throws Exception
+    public void unmarshal(Reader reader) throws Exception
     {
 
-        iD.Unmarshal(reader);
+        iD.unmarshal(reader);
 
-        context = reader.ReadBytes();
+        context = reader.readBytes();
 
     }
 }

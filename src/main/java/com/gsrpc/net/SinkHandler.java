@@ -1,6 +1,7 @@
 package com.gsrpc.net;
 
 import com.gsrpc.*;
+import com.gsrpc.Future;
 import io.netty.channel.*;
 import io.netty.util.HashedWheelTimer;
 import io.netty.util.Timeout;
@@ -25,18 +26,18 @@ public class SinkHandler extends ChannelInboundHandlerAdapter implements Sink{
 
     private final ConcurrentHashMap<Short,Dispatcher> dispatchers = new ConcurrentHashMap<Short, Dispatcher>();
 
+    private final StateListener stateListener;
+
     private AtomicInteger seqID = new AtomicInteger(0);
 
     private final AtomicReference<io.netty.channel.Channel> channelRef = new AtomicReference<io.netty.channel.Channel>(null);
 
-    /**
-     * create new Sink handler with thread factory
-     * @param threadFactory a {@link ThreadFactory} that creates a
-     *                       background {@link Thread} which is dedicated to
-     *                       {@link TimerTask} execution.
-     */
-    public SinkHandler(ThreadFactory threadFactory) {
+
+    public SinkHandler(StateListener stateListener) {
+
+        this.stateListener = stateListener;
     }
+
 
     public void registerDispatcher(short id,Dispatcher dispatcher) {
         dispatchers.put(id,dispatcher);
@@ -51,6 +52,10 @@ public class SinkHandler extends ChannelInboundHandlerAdapter implements Sink{
         super.channelActive(ctx);
 
         channelRef.set(ctx.channel());
+
+        if (this.stateListener != null) {
+            this.stateListener.stateChanged(State.Connected);
+        }
     }
 
     @Override
@@ -59,6 +64,10 @@ public class SinkHandler extends ChannelInboundHandlerAdapter implements Sink{
         super.channelInactive(ctx);
 
         channelRef.set(null);
+
+        if (this.stateListener != null) {
+            this.stateListener.stateChanged(State.Closed);
+        }
     }
 
     @Override
@@ -130,7 +139,7 @@ public class SinkHandler extends ChannelInboundHandlerAdapter implements Sink{
 
         BufferWriter writer = new BufferWriter();
 
-        call.Marshal(writer);
+        call.marshal(writer);
 
         message.setContent(writer.Content());
 
@@ -152,7 +161,7 @@ public class SinkHandler extends ChannelInboundHandlerAdapter implements Sink{
     private void handleRequest(Message message) throws Exception{
         Request request = new Request();
 
-        request.Unmarshal(new BufferReader(message.getContent()));
+        request.unmarshal(new BufferReader(message.getContent()));
 
         Dispatcher dispatcher = dispatchers.get(request.getService());
 
@@ -166,7 +175,7 @@ public class SinkHandler extends ChannelInboundHandlerAdapter implements Sink{
 
         BufferWriter writer = new BufferWriter();
 
-        response.Marshal(writer);
+        response.marshal(writer);
 
         message.setContent(writer.Content());
 
@@ -174,9 +183,12 @@ public class SinkHandler extends ChannelInboundHandlerAdapter implements Sink{
     }
 
     private void handleResponse(Message message) throws Exception{
+
+        logger.debug("---------------------------------------- {} ",this);
+
         Response response = new Response();
 
-        response.Unmarshal(new BufferReader(message.getContent()));
+        response.unmarshal(new BufferReader(message.getContent()));
 
         Callback callback = promises.remove((int) response.getID());
 

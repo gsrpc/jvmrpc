@@ -17,31 +17,31 @@ public class BufferWriter implements Writer {
     }
 
     @Override
-    public void WriteByte(byte val) throws Exception {
+    public void writeByte(byte val) throws Exception {
         content.write(val);
     }
 
     @Override
-    public void WriteSByte(byte val) throws Exception {
+    public void writeSByte(byte val) throws Exception {
         content.write(val);
     }
 
     @Override
-    public void WriteInt16(short val) throws Exception {
+    public void writeInt16(short val) throws Exception {
         content.write((byte) (val & 0xff));
 
         content.write((byte) ((val >> 8) & 0xff));
     }
 
     @Override
-    public void WriteUInt16(short val) throws Exception {
+    public void writeUInt16(short val) throws Exception {
         content.write((byte) (val & 0xff));
 
         content.write((byte) ((val >> 8) & 0xff));
     }
 
     @Override
-    public void WriteInt32(int val) throws Exception {
+    public void writeInt32(int val) throws Exception {
         content.write((byte) (val & 0xff));
 
         content.write((byte) ((val >> 8) & 0xff));
@@ -52,7 +52,7 @@ public class BufferWriter implements Writer {
     }
 
     @Override
-    public void WriteUInt32(int val) throws Exception {
+    public void writeUInt32(int val) throws Exception {
         content.write((byte) (val & 0xff));
 
         content.write((byte) ((val >> 8) & 0xff));
@@ -64,7 +64,7 @@ public class BufferWriter implements Writer {
     }
 
     @Override
-    public void WriteInt64(long val) throws Exception {
+    public void writeInt64(long val) throws Exception {
         content.write((byte) (val & 0xff));
 
         content.write((byte) ((val >> 8) & 0xff));
@@ -83,7 +83,7 @@ public class BufferWriter implements Writer {
     }
 
     @Override
-    public void WriteUInt64(long val) throws Exception {
+    public void writeUInt64(long val) throws Exception {
         content.write((byte) (val & 0xff));
 
         content.write((byte) ((val >> 8) & 0xff));
@@ -102,44 +102,44 @@ public class BufferWriter implements Writer {
     }
 
     @Override
-    public void WriteFloat32(float val) throws Exception {
-        WriteInt32(Float.floatToIntBits(val));
+    public void writeFloat32(float val) throws Exception {
+        writeInt32(Float.floatToIntBits(val));
     }
 
     @Override
-    public void WriteFloat64(double val) throws Exception {
+    public void writeFloat64(double val) throws Exception {
 
-        WriteInt64(Double.doubleToLongBits(val));
+        writeInt64(Double.doubleToLongBits(val));
 
     }
 
     @Override
-    public void WriteString(String val) throws Exception {
+    public void writeString(String val) throws Exception {
         byte[] content = val.getBytes("UTF8");
 
-        WriteUInt16((short) content.length);
+        writeUInt16((short) content.length);
 
         this.content.write(content);
     }
 
     @Override
-    public void WriteArrayBytes(byte[] val) throws Exception {
+    public void writeArrayBytes(byte[] val) throws Exception {
         this.content.write(val);
 
     }
 
     @Override
-    public void WriteBytes(byte[] val) throws Exception {
-        WriteUInt16((short) val.length);
-        WriteArrayBytes(val);
+    public void writeBytes(byte[] val) throws Exception {
+        writeUInt16((short) val.length);
+        writeArrayBytes(val);
     }
 
     @Override
-    public void WriteBoolean(boolean val) throws Exception {
+    public void writeBoolean(boolean val) throws Exception {
         if (val){
-            WriteByte((byte)1);
+            writeByte((byte) 1);
         } else {
-            WriteByte((byte)0);
+            writeByte((byte) 0);
         }
     }
 }

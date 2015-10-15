@@ -5,32 +5,32 @@ package com.gsrpc;
  */
 public interface Reader {
 
-    byte ReadByte() throws Exception;
+    byte readByte() throws Exception;
 
-    byte ReadSByte() throws Exception;
+    byte readSByte() throws Exception;
 
-    short ReadInt16() throws Exception;
+    short readInt16() throws Exception;
 
-    short ReadUInt16() throws Exception;
+    short readUInt16() throws Exception;
 
-    int ReadInt32() throws Exception;
+    int readInt32() throws Exception;
 
-    int ReadUInt32() throws Exception;
+    int readUInt32() throws Exception;
 
-    long ReadInt64() throws Exception;
+    long readInt64() throws Exception;
 
-    long ReadUInt64() throws Exception;
+    long readUInt64() throws Exception;
 
-    float ReadFloat32() throws Exception;
+    float readFloat32() throws Exception;
 
-    double ReadFloat64() throws Exception;
+    double readFloat64() throws Exception;
 
-    String ReadString() throws Exception;
+    String readString() throws Exception;
 
-    boolean ReadBoolean() throws Exception;
+    boolean readBoolean() throws Exception;
 
-    byte[] ReadBytes() throws Exception;
+    byte[] readBytes() throws Exception;
 
-    void ReadArrayBytes(byte[] buff) throws Exception;
+    void readArrayBytes(byte[] buff) throws Exception;
 
 }

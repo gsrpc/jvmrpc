@@ -48,24 +48,24 @@ public class Message
         this.content = arg;
     }
 
-    public void Marshal(Writer writer)  throws Exception
+    public void marshal(Writer writer)  throws Exception
     {
 
-        code.Marshal(writer);
+        code.marshal(writer);
 
-        writer.WriteByte(agent);
+        writer.writeByte(agent);
 
-        writer.WriteBytes(content);
+        writer.writeBytes(content);
 
     }
-    public void Unmarshal(Reader reader) throws Exception
+    public void unmarshal(Reader reader) throws Exception
     {
 
-        code = Code.Unmarshal(reader);
+        code = Code.unmarshal(reader);
 
-        agent = reader.ReadByte();
+        agent = reader.readByte();
 
-        content = reader.ReadBytes();
+        content = reader.readBytes();
 
     }
 }

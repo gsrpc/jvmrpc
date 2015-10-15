@@ -59,34 +59,34 @@ public class Request
         this.params = arg;
     }
 
-    public void Marshal(Writer writer)  throws Exception
+    public void marshal(Writer writer)  throws Exception
     {
 
-        writer.WriteUInt16(iD);
+        writer.writeUInt16(iD);
 
-        writer.WriteUInt16(method);
+        writer.writeUInt16(method);
 
-        writer.WriteUInt16(service);
+        writer.writeUInt16(service);
 
-        writer.WriteUInt16((short)params.length);
+        writer.writeUInt16((short)params.length);
 
 		for(Param v3 : params){
 
-			v3.Marshal(writer);
+			v3.marshal(writer);
 
 		}
 
     }
-    public void Unmarshal(Reader reader) throws Exception
+    public void unmarshal(Reader reader) throws Exception
     {
 
-        iD = reader.ReadUInt16();
+        iD = reader.readUInt16();
 
-        method = reader.ReadUInt16();
+        method = reader.readUInt16();
 
-        service = reader.ReadUInt16();
+        service = reader.readUInt16();
 
-        int max3 = reader.ReadUInt16();
+        int max3 = reader.readUInt16();
 
 		params = new Param[max3];
 
@@ -94,7 +94,7 @@ public class Request
 
 			Param v3 = new Param();
 
-			v3.Unmarshal(reader);
+			v3.unmarshal(reader);
 
 			params[i3] = v3;
 

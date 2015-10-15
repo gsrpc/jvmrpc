@@ -1,4 +1,4 @@
-package com.gsrpc;
+package com.gsrpc.test;
 
 import com.gsrpc.Writer;
 
@@ -7,11 +7,11 @@ import com.gsrpc.Reader;
 import java.nio.ByteBuffer;
 
 
-public class RemoteException extends Exception
+public class UnknownException extends Exception
 {
 
 
-    public RemoteException() {
+    public UnknownException() {
     
     }
 

@@ -50,13 +50,13 @@ public enum OSType {
     public byte getValue() {
         return this.value;
     }
-    public void Marshal(Writer writer) throws Exception
+    public void marshal(Writer writer) throws Exception
     {
-         writer.WriteByte(getValue()); 
+         writer.writeByte(getValue()); 
     }
-    public static OSType Unmarshal(Reader reader) throws Exception
+    public static OSType unmarshal(Reader reader) throws Exception
     {
-        byte code =   reader.ReadByte(); 
+        byte code =   reader.readByte(); 
         switch(code)
         {
         

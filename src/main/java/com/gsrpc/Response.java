@@ -59,28 +59,28 @@ public class Response
         this.content = arg;
     }
 
-    public void Marshal(Writer writer)  throws Exception
+    public void marshal(Writer writer)  throws Exception
     {
 
-        writer.WriteUInt16(iD);
+        writer.writeUInt16(iD);
 
-        writer.WriteUInt16(service);
+        writer.writeUInt16(service);
 
-        writer.WriteSByte(exception);
+        writer.writeSByte(exception);
 
-        writer.WriteBytes(content);
+        writer.writeBytes(content);
 
     }
-    public void Unmarshal(Reader reader) throws Exception
+    public void unmarshal(Reader reader) throws Exception
     {
 
-        iD = reader.ReadUInt16();
+        iD = reader.readUInt16();
 
-        service = reader.ReadUInt16();
+        service = reader.readUInt16();
 
-        exception = reader.ReadSByte();
+        exception = reader.readSByte();
 
-        content = reader.ReadBytes();
+        content = reader.readBytes();
 
     }
 }

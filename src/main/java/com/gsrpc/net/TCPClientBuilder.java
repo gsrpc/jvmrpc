@@ -78,7 +78,7 @@ public final class TCPClientBuilder {
 
     public TCPClient Build() throws Exception {
 
-        final TCPClient client = new TCPClient(bootstrap, resolver);
+        final TCPClient client = new TCPClient(bootstrap, resolver,this.relay,this.unit);
 
 
         if (eventLoopGroup == null) {
@@ -108,7 +108,7 @@ public final class TCPClientBuilder {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
 
-                        SinkHandler handler = new SinkHandler(threadFactory);
+                        SinkHandler handler = new SinkHandler(client);
 
                         ch.pipeline().addLast(handler);
 
@@ -117,12 +117,6 @@ public final class TCPClientBuilder {
                 });
             }
         });
-
-        if (relay != -1) {
-            client.reconnect(relay, unit);
-        } else {
-            client.connect();
-        }
 
         return client;
     }

@@ -58,6 +58,8 @@ public class HeartbeatEchoHandler extends ChannelInboundHandlerAdapter {
 
         if(message.getCode() != Code.Heartbeat) {
             ctx.fireChannelRead(msg);
+
+            return;
         }
 
         ctx.channel().writeAndFlush(msg);

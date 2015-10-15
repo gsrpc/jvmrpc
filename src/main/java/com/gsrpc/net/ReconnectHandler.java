@@ -37,7 +37,11 @@ public class ReconnectHandler extends ChannelInboundHandlerAdapter {
         ctx.channel().eventLoop().schedule(new Runnable() {
             @Override
             public void run() {
-                reconnect.reconnect(relay,unit);
+                try {
+                    reconnect.reconnect();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
         }, this.relay, unit);

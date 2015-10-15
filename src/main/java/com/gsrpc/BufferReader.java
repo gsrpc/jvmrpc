@@ -25,70 +25,70 @@ public class BufferReader implements Reader {
     }
 
     @Override
-    public byte ReadByte() throws Exception {
+    public byte readByte() throws Exception {
         return content.get();
     }
 
     @Override
-    public byte ReadSByte() throws Exception {
+    public byte readSByte() throws Exception {
         return content.get();
     }
 
     @Override
-    public short ReadInt16() throws Exception {
+    public short readInt16() throws Exception {
         return content.getShort();
     }
 
     @Override
-    public short ReadUInt16() throws Exception {
+    public short readUInt16() throws Exception {
         return content.getShort();
     }
 
     @Override
-    public int ReadInt32() throws Exception {
+    public int readInt32() throws Exception {
         return content.getInt();
     }
 
     @Override
-    public int ReadUInt32() throws Exception {
+    public int readUInt32() throws Exception {
         return content.getInt();
     }
 
     @Override
-    public long ReadInt64() throws Exception {
+    public long readInt64() throws Exception {
         return content.getLong();
     }
 
     @Override
-    public long ReadUInt64() throws Exception {
+    public long readUInt64() throws Exception {
         return content.getLong();
     }
 
     @Override
-    public float ReadFloat32() throws Exception {
+    public float readFloat32() throws Exception {
         return content.getFloat();
     }
 
     @Override
-    public double ReadFloat64() throws Exception {
+    public double readFloat64() throws Exception {
         return content.getDouble();
     }
 
     @Override
-    public String ReadString() throws Exception {
-        short length = ReadUInt16();
+    public String readString() throws Exception {
+        short length = readUInt16();
 
         byte[] buff = new byte[length];
 
 
-        ReadArrayBytes(buff);
+        readArrayBytes(buff);
 
         return new String(buff,"UTF8");
     }
 
     @Override
-    public boolean ReadBoolean() throws Exception {
-        byte val=  ReadByte();
+    public boolean readBoolean() throws Exception {
+        byte val=  readByte();
 
         if (val == 1){
             return true;
@@ -98,19 +98,19 @@ public class BufferReader implements Reader {
     }
 
     @Override
-    public byte[] ReadBytes() throws Exception {
-        short length = ReadUInt16();
+    public byte[] readBytes() throws Exception {
+        short length = readUInt16();
 
         byte[] buff = new byte[length];
 
 
-        ReadArrayBytes(buff);
+        readArrayBytes(buff);
 
         return buff;
     }
 
     @Override
-    public void ReadArrayBytes(byte[] val) throws Exception {
+    public void readArrayBytes(byte[] val) throws Exception {
         content.get(val);
     }
 }
