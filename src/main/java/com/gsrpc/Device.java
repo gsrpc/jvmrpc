@@ -83,6 +83,7 @@ public class Device
 
     public void marshal(Writer writer)  throws Exception
     {
+        writer.writeByte((byte)6);
 
         writer.writeString(iD);
 
@@ -99,18 +100,37 @@ public class Device
     }
     public void unmarshal(Reader reader) throws Exception
     {
+        byte __fields = reader.readByte();
 
         iD = reader.readString();
+        if(-- __fields == 0) {
+            return;
+        }
 
         type = reader.readString();
+        if(-- __fields == 0) {
+            return;
+        }
 
         arch = ArchType.unmarshal(reader);
+        if(-- __fields == 0) {
+            return;
+        }
 
         oS = OSType.unmarshal(reader);
+        if(-- __fields == 0) {
+            return;
+        }
 
         oSVersion = reader.readString();
+        if(-- __fields == 0) {
+            return;
+        }
 
         appKey = reader.readString();
+        if(-- __fields == 0) {
+            return;
+        }
 
     }
 }

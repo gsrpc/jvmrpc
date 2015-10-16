@@ -28,14 +28,19 @@ public class IPV4
 
     public void marshal(Writer writer)  throws Exception
     {
+        writer.writeByte((byte)1);
 
         writer.writeArrayBytes(address);
 
     }
     public void unmarshal(Reader reader) throws Exception
     {
+        byte __fields = reader.readByte();
 
         reader.readArrayBytes(address);
+        if(-- __fields == 0) {
+            return;
+        }
 
     }
 }

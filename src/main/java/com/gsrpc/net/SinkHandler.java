@@ -184,8 +184,6 @@ public class SinkHandler extends ChannelInboundHandlerAdapter implements Sink{
 
     private void handleResponse(Message message) throws Exception{
 
-        logger.debug("---------------------------------------- {} ",this);
-
         Response response = new Response();
 
         response.unmarshal(new BufferReader(message.getContent()));

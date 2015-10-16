@@ -28,14 +28,19 @@ public class Param
 
     public void marshal(Writer writer)  throws Exception
     {
+        writer.writeByte((byte)1);
 
         writer.writeBytes(content);
 
     }
     public void unmarshal(Reader reader) throws Exception
     {
+        byte __fields = reader.readByte();
 
         content = reader.readBytes();
+        if(-- __fields == 0) {
+            return;
+        }
 
     }
 }

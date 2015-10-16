@@ -1,10 +1,10 @@
 package com.gsrpc;
 
+import java.nio.ByteBuffer;
+
 import com.gsrpc.Writer;
 
 import com.gsrpc.Reader;
-
-import java.nio.ByteBuffer;
 
 
 /*
@@ -61,6 +61,7 @@ public class Response
 
     public void marshal(Writer writer)  throws Exception
     {
+        writer.writeByte((byte)4);
 
         writer.writeUInt16(iD);
 
@@ -73,14 +74,27 @@ public class Response
     }
     public void unmarshal(Reader reader) throws Exception
     {
+        byte __fields = reader.readByte();
 
         iD = reader.readUInt16();
+        if(-- __fields == 0) {
+            return;
+        }
 
         service = reader.readUInt16();
+        if(-- __fields == 0) {
+            return;
+        }
 
         exception = reader.readSByte();
+        if(-- __fields == 0) {
+            return;
+        }
 
         content = reader.readBytes();
+        if(-- __fields == 0) {
+            return;
+        }
 
     }
 }

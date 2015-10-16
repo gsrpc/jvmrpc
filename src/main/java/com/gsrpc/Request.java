@@ -61,6 +61,7 @@ public class Request
 
     public void marshal(Writer writer)  throws Exception
     {
+        writer.writeByte((byte)4);
 
         writer.writeUInt16(iD);
 
@@ -79,12 +80,22 @@ public class Request
     }
     public void unmarshal(Reader reader) throws Exception
     {
+        byte __fields = reader.readByte();
 
         iD = reader.readUInt16();
+        if(-- __fields == 0) {
+            return;
+        }
 
         method = reader.readUInt16();
+        if(-- __fields == 0) {
+            return;
+        }
 
         service = reader.readUInt16();
+        if(-- __fields == 0) {
+            return;
+        }
 
         int max3 = reader.readUInt16();
 
@@ -99,6 +110,9 @@ public class Request
 			params[i3] = v3;
 
 		}
+        if(-- __fields == 0) {
+            return;
+        }
 
     }
 }

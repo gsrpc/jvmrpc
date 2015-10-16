@@ -39,6 +39,7 @@ public class Tunnel
 
     public void marshal(Writer writer)  throws Exception
     {
+        writer.writeByte((byte)2);
 
         iD.marshal(writer);
 
@@ -47,10 +48,17 @@ public class Tunnel
     }
     public void unmarshal(Reader reader) throws Exception
     {
+        byte __fields = reader.readByte();
 
         iD.unmarshal(reader);
+        if(-- __fields == 0) {
+            return;
+        }
 
         message.unmarshal(reader);
+        if(-- __fields == 0) {
+            return;
+        }
 
     }
 }
