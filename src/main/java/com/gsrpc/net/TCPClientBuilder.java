@@ -34,7 +34,11 @@ public final class TCPClientBuilder {
 
     private EventLoopGroup eventLoopGroup;
 
+    private int ioThreads = Runtime.getRuntime().availableProcessors() * 2;
+
     private ThreadFactory threadFactory = Executors.defaultThreadFactory();
+
+    private Executor taskExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
 
     public TCPClientBuilder(RemoteResolver resolver) {
 
@@ -54,6 +58,11 @@ public final class TCPClientBuilder {
 
     public TCPClientBuilder threadFactory(ThreadFactory threadFactory) {
         this.threadFactory = threadFactory;
+        return this;
+    }
+
+    public TCPClientBuilder taskExecutor(Executor executor) {
+        this.taskExecutor = executor;
         return this;
     }
 
@@ -82,7 +91,7 @@ public final class TCPClientBuilder {
 
 
         if (eventLoopGroup == null) {
-            eventLoopGroup = new NioEventLoopGroup();
+            eventLoopGroup = new NioEventLoopGroup(ioThreads,threadFactory);
             bootstrap.group(eventLoopGroup);
         }
 
@@ -108,7 +117,7 @@ public final class TCPClientBuilder {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
 
-                        SinkHandler handler = new SinkHandler(client);
+                        SinkHandler handler = new SinkHandler(client,taskExecutor);
 
                         ch.pipeline().addLast(handler);
 

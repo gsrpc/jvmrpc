@@ -28,6 +28,8 @@ public class SinkHandler extends ChannelInboundHandlerAdapter implements Sink{
 
     private final StateListener stateListener;
 
+    private final Executor taskExecutor;
+
     private AtomicInteger seqID = new AtomicInteger(0);
 
     private final AtomicReference<io.netty.channel.Channel> channelRef = new AtomicReference<io.netty.channel.Channel>(null);
@@ -36,6 +38,13 @@ public class SinkHandler extends ChannelInboundHandlerAdapter implements Sink{
     public SinkHandler(StateListener stateListener) {
 
         this.stateListener = stateListener;
+
+        this.taskExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
+    }
+
+    public SinkHandler(StateListener stateListener,Executor taskExecutor) {
+        this.stateListener = stateListener;
+        this.taskExecutor = taskExecutor;
     }
 
 
@@ -78,7 +87,7 @@ public class SinkHandler extends ChannelInboundHandlerAdapter implements Sink{
         switch (message.getCode()) {
             case Request:
 
-                ctx.channel().eventLoop().schedule(new Runnable() {
+                taskExecutor.execute(new Runnable() {
                     @Override
                     public void run() {
                         try {
@@ -87,11 +96,11 @@ public class SinkHandler extends ChannelInboundHandlerAdapter implements Sink{
                             logger.error("handle request error",e);
                         }
                     }
-                },0,TimeUnit.SECONDS);
+                });
                 break;
             case Response:
 
-                ctx.channel().eventLoop().schedule(new Runnable() {
+                taskExecutor.execute(new Runnable() {
                     @Override
                     public void run() {
                         try {
@@ -100,7 +109,7 @@ public class SinkHandler extends ChannelInboundHandlerAdapter implements Sink{
                             logger.error("handle response error", e);
                         }
                     }
-                }, 0, TimeUnit.SECONDS);
+                });
 
                 break;
             default:

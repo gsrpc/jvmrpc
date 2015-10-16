@@ -13,6 +13,7 @@ import io.netty.handler.logging.LoggingHandler;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
@@ -38,6 +39,10 @@ public final class TCPServerBuilder {
 
     private ThreadFactory threadFactory = Executors.defaultThreadFactory();
 
+    private int ioThreads = Runtime.getRuntime().availableProcessors() * 2;
+
+    private Executor taskExecutor = Executors.newFixedThreadPool(ioThreads);
+
     public TCPServerBuilder(InetSocketAddress address) {
 
         this.address = address;
@@ -45,8 +50,20 @@ public final class TCPServerBuilder {
         bootstrap.channel(NioServerSocketChannel.class);
     }
 
+    public TCPServerBuilder taskExecutor(Executor executor) {
+        this.taskExecutor = executor;
+        return this;
+    }
+
     public TCPServerBuilder threadFactory(ThreadFactory threadFactory) {
         this.threadFactory = threadFactory;
+        return this;
+    }
+
+    public TCPServerBuilder ioThreads(int threads) {
+
+        this.ioThreads = threads;
+
         return this;
     }
 
@@ -89,7 +106,7 @@ public final class TCPServerBuilder {
 
 
         if (group == null) {
-            group = new NioEventLoopGroup();
+            group = new NioEventLoopGroup(this.ioThreads,this.threadFactory);
         }
 
         if (childGroup != null) {
@@ -115,7 +132,7 @@ public final class TCPServerBuilder {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
 
-                        SinkHandler handler = new SinkHandler(null);
+                        SinkHandler handler = new SinkHandler(null,taskExecutor);
 
                         ch.pipeline().addLast(handler);
 
