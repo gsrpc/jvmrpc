@@ -1,10 +1,10 @@
 package com.gsrpc;
 
-import com.gsrpc.Writer;
-
 import com.gsrpc.Reader;
 
 import java.nio.ByteBuffer;
+
+import com.gsrpc.Writer;
 
 
 /*
@@ -41,7 +41,7 @@ public enum State {
             return "Closed";
         
         }
-        return String.format("State#%d",this.value);
+        return "State#" + this.value;
     }
     public byte getValue() {
         return this.value;

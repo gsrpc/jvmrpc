@@ -33,4 +33,6 @@ public interface Reader {
 
     void readArrayBytes(byte[] buff) throws Exception;
 
+    void readSkip(byte tag) throws Exception;
+
 }

@@ -1,10 +1,10 @@
 package com.gsrpc;
 
-import com.gsrpc.Writer;
-
 import com.gsrpc.Reader;
 
 import java.nio.ByteBuffer;
+
+import com.gsrpc.Writer;
 
 
 /*
@@ -45,7 +45,7 @@ public enum OSType {
             return "IOS";
         
         }
-        return String.format("OSType#%d",this.value);
+        return "OSType#" + this.value;
     }
     public byte getValue() {
         return this.value;

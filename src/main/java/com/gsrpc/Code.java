@@ -1,10 +1,10 @@
 package com.gsrpc;
 
-import com.gsrpc.Writer;
-
 import com.gsrpc.Reader;
 
 import java.nio.ByteBuffer;
+
+import com.gsrpc.Writer;
 
 
 /*
@@ -49,7 +49,7 @@ public enum Code {
             return "Tunnel";
         
         }
-        return String.format("Code#%d",this.value);
+        return "Code#" + this.value;
     }
     public byte getValue() {
         return this.value;

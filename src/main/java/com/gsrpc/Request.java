@@ -1,10 +1,10 @@
 package com.gsrpc;
 
-import com.gsrpc.Writer;
-
 import com.gsrpc.Reader;
 
 import java.nio.ByteBuffer;
+
+import com.gsrpc.Writer;
 
 
 /*
@@ -63,12 +63,16 @@ public class Request
     {
         writer.writeByte((byte)4);
 
+        writer.writeByte((byte)com.gsrpc.Tag.I16.getValue());
         writer.writeUInt16(iD);
 
+        writer.writeByte((byte)com.gsrpc.Tag.I16.getValue());
         writer.writeUInt16(method);
 
+        writer.writeByte((byte)com.gsrpc.Tag.I16.getValue());
         writer.writeUInt16(service);
 
+        writer.writeByte((byte)((com.gsrpc.Tag.Table.getValue() << 4)|com.gsrpc.Tag.List.getValue()));
         writer.writeUInt16((short)params.length);
 
 		for(Param v3 : params){
@@ -81,23 +85,51 @@ public class Request
     public void unmarshal(Reader reader) throws Exception
     {
         byte __fields = reader.readByte();
+        
+        {
+            byte tag = reader.readByte();
 
-        iD = reader.readUInt16();
-        if(-- __fields == 0) {
-            return;
+            if(tag != com.gsrpc.Tag.Skip.getValue()) {
+                iD = reader.readUInt16();
+            }
+
+            if(-- __fields == 0) {
+                return;
+            }
         }
 
-        method = reader.readUInt16();
-        if(-- __fields == 0) {
-            return;
+        
+        {
+            byte tag = reader.readByte();
+
+            if(tag != com.gsrpc.Tag.Skip.getValue()) {
+                method = reader.readUInt16();
+            }
+
+            if(-- __fields == 0) {
+                return;
+            }
         }
 
-        service = reader.readUInt16();
-        if(-- __fields == 0) {
-            return;
+        
+        {
+            byte tag = reader.readByte();
+
+            if(tag != com.gsrpc.Tag.Skip.getValue()) {
+                service = reader.readUInt16();
+            }
+
+            if(-- __fields == 0) {
+                return;
+            }
         }
 
-        int max3 = reader.readUInt16();
+        
+        {
+            byte tag = reader.readByte();
+
+            if(tag != com.gsrpc.Tag.Skip.getValue()) {
+                int max3 = reader.readUInt16();
 
 		params = new Param[max3];
 
@@ -110,9 +142,22 @@ public class Request
 			params[i3] = v3;
 
 		}
-        if(-- __fields == 0) {
-            return;
+            }
+
+            if(-- __fields == 0) {
+                return;
+            }
         }
 
+        
+        for(int i = 0; i < (int)__fields; i ++) {
+            byte tag = reader.readByte();
+
+            if (tag == com.gsrpc.Tag.Skip.getValue()) {
+                continue;
+            }
+
+            reader.readSkip(tag);
+        }
     }
 }

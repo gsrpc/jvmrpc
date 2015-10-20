@@ -1,4 +1,4 @@
-package com.gsrpc.test;
+package com.gsrpc;
 
 import com.gsrpc.Writer;
 
@@ -7,11 +7,11 @@ import com.gsrpc.Reader;
 import java.nio.ByteBuffer;
 
 
-public class UnknownException extends Exception
+public class UnmarshalException extends Exception
 {
 
 
-    public UnknownException() {
+    public UnmarshalException() {
     
     }
 

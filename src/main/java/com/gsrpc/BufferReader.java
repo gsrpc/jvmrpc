@@ -113,4 +113,40 @@ public class BufferReader implements Reader {
     public void readArrayBytes(byte[] val) throws Exception {
         content.get(val);
     }
+
+    @Override
+    public void readSkip(byte tag) throws Exception {
+
+        if(tag == Tag.I8.getValue()) {
+            readByte();
+        } else if(tag == Tag.I16.getValue()) {
+            readUInt16();
+        } else if(tag == Tag.I32.getValue()) {
+            readUInt32();
+        } else if(tag == Tag.I64.getValue()) {
+            readUInt64();
+        } else if(tag == Tag.Table.getValue()) {
+            readUInt16();
+        } else if(tag == Tag.String.getValue()) {
+            byte fields = readByte(); // read fields counter
+
+            for (int i =0; i < fields; i ++) {
+                tag = readByte();
+                readSkip(tag);
+            }
+
+        } else {
+            if ((tag& 0xf) == Tag.List.getValue()) {
+                short length = readUInt16();
+
+                tag = (byte)((tag >> 4) & 0xf);
+
+                for (int i =0; i < length; i ++ ) {
+                    readSkip(tag);
+                }
+            }
+        }
+    }
+
+
 }

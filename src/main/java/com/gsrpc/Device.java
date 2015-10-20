@@ -1,10 +1,10 @@
 package com.gsrpc;
 
-import com.gsrpc.Writer;
-
 import com.gsrpc.Reader;
 
 import java.nio.ByteBuffer;
+
+import com.gsrpc.Writer;
 
 
 /*
@@ -85,52 +85,115 @@ public class Device
     {
         writer.writeByte((byte)6);
 
+        writer.writeByte((byte)com.gsrpc.Tag.String.getValue());
         writer.writeString(iD);
 
+        writer.writeByte((byte)com.gsrpc.Tag.String.getValue());
         writer.writeString(type);
 
+        writer.writeByte((byte)com.gsrpc.Tag.I8.getValue());
         arch.marshal(writer);
 
+        writer.writeByte((byte)com.gsrpc.Tag.I8.getValue());
         oS.marshal(writer);
 
+        writer.writeByte((byte)com.gsrpc.Tag.String.getValue());
         writer.writeString(oSVersion);
 
+        writer.writeByte((byte)com.gsrpc.Tag.String.getValue());
         writer.writeString(appKey);
 
     }
     public void unmarshal(Reader reader) throws Exception
     {
         byte __fields = reader.readByte();
+        
+        {
+            byte tag = reader.readByte();
 
-        iD = reader.readString();
-        if(-- __fields == 0) {
-            return;
+            if(tag != com.gsrpc.Tag.Skip.getValue()) {
+                iD = reader.readString();
+            }
+
+            if(-- __fields == 0) {
+                return;
+            }
         }
 
-        type = reader.readString();
-        if(-- __fields == 0) {
-            return;
+        
+        {
+            byte tag = reader.readByte();
+
+            if(tag != com.gsrpc.Tag.Skip.getValue()) {
+                type = reader.readString();
+            }
+
+            if(-- __fields == 0) {
+                return;
+            }
         }
 
-        arch = ArchType.unmarshal(reader);
-        if(-- __fields == 0) {
-            return;
+        
+        {
+            byte tag = reader.readByte();
+
+            if(tag != com.gsrpc.Tag.Skip.getValue()) {
+                arch = ArchType.unmarshal(reader);
+            }
+
+            if(-- __fields == 0) {
+                return;
+            }
         }
 
-        oS = OSType.unmarshal(reader);
-        if(-- __fields == 0) {
-            return;
+        
+        {
+            byte tag = reader.readByte();
+
+            if(tag != com.gsrpc.Tag.Skip.getValue()) {
+                oS = OSType.unmarshal(reader);
+            }
+
+            if(-- __fields == 0) {
+                return;
+            }
         }
 
-        oSVersion = reader.readString();
-        if(-- __fields == 0) {
-            return;
+        
+        {
+            byte tag = reader.readByte();
+
+            if(tag != com.gsrpc.Tag.Skip.getValue()) {
+                oSVersion = reader.readString();
+            }
+
+            if(-- __fields == 0) {
+                return;
+            }
         }
 
-        appKey = reader.readString();
-        if(-- __fields == 0) {
-            return;
+        
+        {
+            byte tag = reader.readByte();
+
+            if(tag != com.gsrpc.Tag.Skip.getValue()) {
+                appKey = reader.readString();
+            }
+
+            if(-- __fields == 0) {
+                return;
+            }
         }
 
+        
+        for(int i = 0; i < (int)__fields; i ++) {
+            byte tag = reader.readByte();
+
+            if (tag == com.gsrpc.Tag.Skip.getValue()) {
+                continue;
+            }
+
+            reader.readSkip(tag);
+        }
     }
 }

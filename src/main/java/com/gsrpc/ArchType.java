@@ -1,10 +1,10 @@
 package com.gsrpc;
 
-import com.gsrpc.Writer;
-
 import com.gsrpc.Reader;
 
 import java.nio.ByteBuffer;
+
+import com.gsrpc.Writer;
 
 
 /*
@@ -33,7 +33,7 @@ public enum ArchType {
             return "ARM";
         
         }
-        return String.format("ArchType#%d",this.value);
+        return "ArchType#" + this.value;
     }
     public byte getValue() {
         return this.value;

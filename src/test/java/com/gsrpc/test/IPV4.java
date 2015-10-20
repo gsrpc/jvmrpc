@@ -1,10 +1,10 @@
 package com.gsrpc.test;
 
-import com.gsrpc.Reader;
-
 import java.nio.ByteBuffer;
 
 import com.gsrpc.Writer;
+
+import com.gsrpc.Reader;
 
 
 /*
@@ -30,17 +30,35 @@ public class IPV4
     {
         writer.writeByte((byte)1);
 
-        writer.writeArrayBytes(address);
+        writer.writeByte((byte)((com.gsrpc.Tag.I8.getValue() << 4)|com.gsrpc.Tag.List.getValue()));
+        writer.writeBytes(address);
 
     }
     public void unmarshal(Reader reader) throws Exception
     {
         byte __fields = reader.readByte();
+        
+        {
+            byte tag = reader.readByte();
 
-        reader.readArrayBytes(address);
-        if(-- __fields == 0) {
-            return;
+            if(tag != com.gsrpc.Tag.Skip.getValue()) {
+                address = reader.readBytes();
+            }
+
+            if(-- __fields == 0) {
+                return;
+            }
         }
 
+        
+        for(int i = 0; i < (int)__fields; i ++) {
+            byte tag = reader.readByte();
+
+            if (tag == com.gsrpc.Tag.Skip.getValue()) {
+                continue;
+            }
+
+            reader.readSkip(tag);
+        }
     }
 }
