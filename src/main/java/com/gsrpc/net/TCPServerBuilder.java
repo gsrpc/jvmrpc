@@ -132,11 +132,9 @@ public final class TCPServerBuilder {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
 
-                        SinkHandler handler = new SinkHandler(null,taskExecutor);
+                        SinkHandler handler = new SinkHandler(null,server,taskExecutor);
 
                         ch.pipeline().addLast(handler);
-
-                        server.setSink(handler);
                     }
                 });
             }

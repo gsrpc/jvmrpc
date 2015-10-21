@@ -4,9 +4,13 @@ import com.gsrpc.*;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
+import io.netty.util.HashedWheelTimer;
+import io.netty.util.Timeout;
+import io.netty.util.TimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.InetSocketAddress;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -14,9 +18,11 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * gsrpc tcp client
  */
-public final class TCPClient implements Reconnect,Sink,StateListener {
+public final class TCPClient implements Reconnect, StateListener, MessageChannel,Dispatcher {
 
     private static final Logger logger = LoggerFactory.getLogger(TCPClient.class);
+
+    private final Object locker = new Object();
 
     private final Bootstrap bootstrap;
 
@@ -26,11 +32,15 @@ public final class TCPClient implements Reconnect,Sink,StateListener {
 
     private final TimeUnit unit;
 
-    private AtomicReference<State> state = new AtomicReference<State>(State.Disconnect);
+    private State state = State.Disconnect;
 
-    private AtomicReference<Sink> channel = new AtomicReference<Sink>(null);
+    private io.netty.channel.Channel channel;
+
+    private AtomicReference<SinkHandler> sinkHandler = new AtomicReference<SinkHandler>();
 
     private final ConcurrentHashMap<Short,Dispatcher> dispatchers = new ConcurrentHashMap<Short, Dispatcher>();
+
+    private static final HashedWheelTimer wheelTimer = new HashedWheelTimer();
 
     private final Promise<Void> connected = new Promise<Void>(0) {
         @Override
@@ -57,108 +67,105 @@ public final class TCPClient implements Reconnect,Sink,StateListener {
 
     public void connect() throws Exception {
 
-        bootstrap.remoteAddress(resolver.Resolve());
+        synchronized (locker) {
+            doConnect();
+        }
 
-        if (relay == -1) {
+    }
 
-            if (!state.compareAndSet(State.Disconnect, State.Connecting)) {
-                throw new Exception("");
+
+    private void doConnect() throws Exception {
+
+        if (state != State.Disconnect) {
+            return;
+        }
+
+        state = State.Connecting;
+
+
+        InetSocketAddress remote = null;
+
+        try {
+            // resolve remote address
+            remote = resolver.Resolve();
+
+        } catch (Exception e) {
+
+            state = State.Disconnect;
+
+            // reconnect
+            if (relay != -1) {
+                wheelTimer.newTimeout(new TimerTask() {
+                    @Override
+                    public void run(Timeout timeout) throws Exception {
+                        doConnect();
+                    }
+                },relay,unit);
+
+                return;
+
+            } else {
+                throw e;
+            }
+        }
+
+
+        bootstrap.connect(remote).addListener(new ChannelFutureListener() {
+            @Override
+            public void operationComplete(ChannelFuture future) throws Exception {
+
+                synchronized (TCPClient.this) {
+                    if(future.isSuccess() && state == State.Connecting) {
+                        channel = future.channel();
+                        state = State.Connected;
+                        sinkHandler.set((SinkHandler) channel.pipeline().get("sink"));
+                        return;
+                    }
+
+                    future.channel().close();
+
+                    state = State.Disconnect;
+                }
+
+                // reconnect
+                if (relay != -1) {
+                    wheelTimer.newTimeout(new TimerTask() {
+                        @Override
+                        public void run(Timeout timeout) throws Exception {
+                            connect();
+                        }
+                    }, relay, unit);
+                }
+
+            }
+        });
+    }
+
+
+    /**
+     * close the tcp client
+     */
+    public void close() {
+
+        synchronized (locker) {
+
+            if(state == State.Connected) {
+                channel.close();
             }
 
-            bootstrap.connect();
-        } else {
-            reconnect();
+            state = State.Closed;
         }
-    }
-
-
-    public void close() {
-        state.set(State.Closed);
-
-        bootstrap.group().shutdownGracefully();
-    }
-
-
-    void setSink(Sink sink) {
-
-        for(ConcurrentHashMap.Entry<Short,Dispatcher> dispatcher: dispatchers.entrySet()) {
-            sink.registerDispatcher(dispatcher.getKey(),dispatcher.getValue());
-        }
-
-        this.channel.set(sink);
     }
 
 
     @Override
     public void reconnect() throws Exception {
-
-        if (!state.compareAndSet(State.Disconnect, State.Connecting)) {
-            throw new Exception("already connected");
-        }
-
-        try {
-
-            bootstrap.remoteAddress(resolver.Resolve());
-
-        } catch (Exception e) {
-            logger.error("resolver remote address error", e);
-
-            if (state.compareAndSet(State.Connecting, State.Disconnect)) {
-                bootstrap.group().schedule(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            reconnect();
-                        } catch (Exception e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-                }, relay, unit);
-            }
-        }
-
-        bootstrap.connect().addListener(new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture future) throws Exception {
-                if (!future.isSuccess()) {
-
-                    if (state.compareAndSet(State.Connecting, State.Disconnect)) {
-                        future.channel().eventLoop().schedule(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    reconnect();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }, relay, unit);
-                    }
-
-
-                } else {
-
-                    if (!state.compareAndSet(State.Connecting, State.Connected)) {
-                        future.channel().close();
-                    }
-
-
-                    future.channel().closeFuture().addListener(new ChannelFutureListener() {
-                        @Override
-                        public void operationComplete(ChannelFuture future) throws Exception {
-                            state.set(State.Disconnect);
-                        }
-                    });
-                }
-            }
-        });
-
-
+        connect();
     }
 
     @Override
     public void send(Message message) throws Exception {
-        MessageChannel messageChannel = channel.get();
+        MessageChannel messageChannel = sinkHandler.get();
 
         if(messageChannel == null) {
             throw new BrokenChannel();
@@ -169,7 +176,7 @@ public final class TCPClient implements Reconnect,Sink,StateListener {
 
     @Override
     public void send(Request call, Callback callback) throws Exception {
-        MessageChannel messageChannel = channel.get();
+        MessageChannel messageChannel = sinkHandler.get();
 
         if(messageChannel == null) {
             throw new BrokenChannel();
@@ -188,12 +195,12 @@ public final class TCPClient implements Reconnect,Sink,StateListener {
         return this.closed;
     }
 
-    @Override
+
     public void registerDispatcher(short id, Dispatcher dispatcher) {
         dispatchers.put(id, dispatcher);
     }
 
-    @Override
+
     public void unregisterDispatcher(short id, Dispatcher dispatcher) {
         dispatchers.remove(id, dispatcher);
     }
@@ -209,5 +216,17 @@ public final class TCPClient implements Reconnect,Sink,StateListener {
                 this.closed.Notify(null,null);
                 break;
         }
+    }
+
+    @Override
+    public Response Dispatch(Request request) throws Exception {
+
+        Dispatcher dispatcher = this.dispatchers.get(request.getService());
+
+        if (dispatcher == null) {
+            throw new InvalidContractException();
+        }
+
+        return dispatcher.Dispatch(request);
     }
 }

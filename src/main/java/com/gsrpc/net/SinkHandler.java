@@ -1,7 +1,6 @@
 package com.gsrpc.net;
 
 import com.gsrpc.*;
-import com.gsrpc.Future;
 import io.netty.channel.*;
 import io.netty.util.HashedWheelTimer;
 import io.netty.util.Timeout;
@@ -16,7 +15,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * rpc sink handler
  */
-public class SinkHandler extends ChannelInboundHandlerAdapter implements Sink{
+public class SinkHandler extends ChannelInboundHandlerAdapter implements MessageChannel {
 
     private static final Logger logger = LoggerFactory.getLogger(SinkHandler.class);
 
@@ -24,9 +23,10 @@ public class SinkHandler extends ChannelInboundHandlerAdapter implements Sink{
 
     private final ConcurrentHashMap<Integer, Callback> promises = new ConcurrentHashMap<Integer, Callback>();
 
-    private final ConcurrentHashMap<Short,Dispatcher> dispatchers = new ConcurrentHashMap<Short, Dispatcher>();
 
     private final StateListener stateListener;
+
+    private final Dispatcher dispatcher;
 
     private final Executor taskExecutor;
 
@@ -35,25 +35,18 @@ public class SinkHandler extends ChannelInboundHandlerAdapter implements Sink{
     private final AtomicReference<io.netty.channel.Channel> channelRef = new AtomicReference<io.netty.channel.Channel>(null);
 
 
-    public SinkHandler(StateListener stateListener) {
+    public SinkHandler(StateListener stateListener,Dispatcher dispatcher) {
 
         this.stateListener = stateListener;
+        this.dispatcher = dispatcher;
 
         this.taskExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
     }
 
-    public SinkHandler(StateListener stateListener,Executor taskExecutor) {
+    public SinkHandler(StateListener stateListener,Dispatcher dispatcher,Executor taskExecutor) {
         this.stateListener = stateListener;
         this.taskExecutor = taskExecutor;
-    }
-
-
-    public void registerDispatcher(short id,Dispatcher dispatcher) {
-        dispatchers.put(id,dispatcher);
-    }
-
-    public void unregisterDispatcher(short id,Dispatcher dispatcher) {
-        dispatchers.remove(id,dispatcher);
+        this.dispatcher = dispatcher;
     }
 
     @Override
@@ -171,12 +164,6 @@ public class SinkHandler extends ChannelInboundHandlerAdapter implements Sink{
         Request request = new Request();
 
         request.unmarshal(new BufferReader(message.getContent()));
-
-        Dispatcher dispatcher = dispatchers.get(request.getService());
-
-        if (dispatcher == null) {
-            throw new InvalidContractException();
-        }
 
         Response response = dispatcher.Dispatch(request);
 

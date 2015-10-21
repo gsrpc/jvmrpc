@@ -117,11 +117,9 @@ public final class TCPClientBuilder {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
 
-                        SinkHandler handler = new SinkHandler(client,taskExecutor);
+                        SinkHandler handler = new SinkHandler(client,client,taskExecutor);
 
-                        ch.pipeline().addLast(handler);
-
-                        client.setSink(handler);
+                        ch.pipeline().addLast("sink", handler);
                     }
                 });
             }

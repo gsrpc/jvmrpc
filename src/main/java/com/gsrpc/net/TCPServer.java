@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * tcp server handler
  */
-public final class TCPServer implements Sink{
+public final class TCPServer implements MessageChannel,Dispatcher {
 
 
     private final ServerBootstrap bootstrap;
@@ -26,7 +26,7 @@ public final class TCPServer implements Sink{
 
     private AtomicReference<ChannelFuture> future = new AtomicReference<ChannelFuture>(null);
 
-    private AtomicReference<Sink> channel = new AtomicReference<Sink>(null);
+    private AtomicReference<SinkHandler> channel = new AtomicReference<SinkHandler>(null);
 
     private final ConcurrentHashMap<Short,Dispatcher> dispatchers = new ConcurrentHashMap<Short, Dispatcher>();
 
@@ -89,14 +89,6 @@ public final class TCPServer implements Sink{
         }
     }
 
-    public void setSink(Sink sink) {
-
-        for(ConcurrentHashMap.Entry<Short,Dispatcher> dispatcher: dispatchers.entrySet()) {
-            sink.registerDispatcher(dispatcher.getKey(),dispatcher.getValue());
-        }
-
-        this.channel.set(sink);
-    }
 
     @Override
     public void send(Message message) throws Exception {
@@ -111,6 +103,7 @@ public final class TCPServer implements Sink{
 
     @Override
     public void send(Request call, Callback callback) throws Exception {
+
         MessageChannel messageChannel = channel.get();
 
         if(messageChannel == null) {
@@ -120,13 +113,25 @@ public final class TCPServer implements Sink{
         messageChannel.send(call,callback);
     }
 
-    @Override
+
     public void registerDispatcher(short id, Dispatcher dispatcher) {
         dispatchers.put(id,dispatcher);
     }
 
-    @Override
+
     public void unregisterDispatcher(short id, Dispatcher dispatcher) {
         dispatchers.remove(id,dispatcher);
+    }
+
+    @Override
+    public Response Dispatch(Request request) throws Exception {
+
+        Dispatcher dispatcher = this.dispatchers.get(request.getService());
+
+        if (dispatcher == null) {
+            throw new InvalidContractException();
+        }
+
+        return dispatcher.Dispatch(request);
     }
 }

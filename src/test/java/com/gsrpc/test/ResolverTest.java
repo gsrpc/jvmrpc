@@ -129,5 +129,7 @@ public class ResolverTest {
 
         resolver.resolve("~~~", 5).util();
 
+        client.close();
+
     }
 }
