@@ -5,10 +5,14 @@ group 'com.github.gsrpc'
 version '1.0-SNAPSHOT'
 
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
 
+compileJava {
 
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+
+    options.compilerArgs << '-Xlint:unchecked'
+}
 
 repositories {
     maven{ url 'http://maven.oschina.net/content/groups/public/'}

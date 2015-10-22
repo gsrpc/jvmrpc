@@ -4,9 +4,6 @@ import com.gsrpc.*;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
-import io.netty.util.HashedWheelTimer;
-import io.netty.util.Timeout;
-import io.netty.util.TimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,8 +36,6 @@ public final class TCPClient implements Reconnect, StateListener, MessageChannel
     private AtomicReference<SinkHandler> sinkHandler = new AtomicReference<SinkHandler>();
 
     private final ConcurrentHashMap<Short,Dispatcher> dispatchers = new ConcurrentHashMap<Short, Dispatcher>();
-
-    private static final HashedWheelTimer wheelTimer = new HashedWheelTimer();
 
     private final Promise<Void> connected = new Promise<Void>(0) {
         @Override
@@ -95,10 +90,14 @@ public final class TCPClient implements Reconnect, StateListener, MessageChannel
 
             // reconnect
             if (relay != -1) {
-                wheelTimer.newTimeout(new TimerTask() {
+                bootstrap.group().schedule(new Runnable() {
                     @Override
-                    public void run(Timeout timeout) throws Exception {
-                        doConnect();
+                    public void run() {
+                        try {
+                            connect();
+                        } catch (Exception e1) {
+                            logger.error("connect exception",e1);
+                        }
                     }
                 },relay,unit);
 
@@ -129,10 +128,14 @@ public final class TCPClient implements Reconnect, StateListener, MessageChannel
 
                 // reconnect
                 if (relay != -1) {
-                    wheelTimer.newTimeout(new TimerTask() {
+                    bootstrap.group().schedule(new Runnable() {
                         @Override
-                        public void run(Timeout timeout) throws Exception {
-                            connect();
+                        public void run() {
+                            try {
+                                connect();
+                            } catch (Exception e) {
+                                logger.error("connect exception",e);
+                            }
                         }
                     }, relay, unit);
                 }

@@ -19,10 +19,9 @@ public class SinkHandler extends ChannelInboundHandlerAdapter implements Message
 
     private static final Logger logger = LoggerFactory.getLogger(SinkHandler.class);
 
-    private static final HashedWheelTimer wheelTimer = new HashedWheelTimer();
+    private final HashedWheelTimer wheelTimer;
 
     private final ConcurrentHashMap<Integer, Callback> promises = new ConcurrentHashMap<Integer, Callback>();
-
 
     private final StateListener stateListener;
 
@@ -34,19 +33,11 @@ public class SinkHandler extends ChannelInboundHandlerAdapter implements Message
 
     private final AtomicReference<io.netty.channel.Channel> channelRef = new AtomicReference<io.netty.channel.Channel>(null);
 
-
-    public SinkHandler(StateListener stateListener,Dispatcher dispatcher) {
-
-        this.stateListener = stateListener;
-        this.dispatcher = dispatcher;
-
-        this.taskExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
-    }
-
-    public SinkHandler(StateListener stateListener,Dispatcher dispatcher,Executor taskExecutor) {
+    public SinkHandler(StateListener stateListener,Dispatcher dispatcher,Executor taskExecutor,HashedWheelTimer wheelTimer) {
         this.stateListener = stateListener;
         this.taskExecutor = taskExecutor;
         this.dispatcher = dispatcher;
+        this.wheelTimer = wheelTimer;
     }
 
     @Override
@@ -80,29 +71,39 @@ public class SinkHandler extends ChannelInboundHandlerAdapter implements Message
         switch (message.getCode()) {
             case Request:
 
-                taskExecutor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            handleRequest(message);
-                        } catch (Exception e) {
-                            logger.error("handle request error",e);
+                if(taskExecutor != null) {
+                    taskExecutor.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                handleRequest(message);
+                            } catch (Exception e) {
+                                logger.error("handle request error",e);
+                            }
                         }
-                    }
-                });
+                    });
+                } else {
+                    handleRequest(message);
+                }
+
+
                 break;
             case Response:
 
-                taskExecutor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            handleResponse(message);
-                        } catch (Exception e) {
-                            logger.error("handle response error", e);
+                if (taskExecutor != null) {
+                    taskExecutor.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                handleResponse(message);
+                            } catch (Exception e) {
+                                logger.error("handle response error", e);
+                            }
                         }
-                    }
-                });
+                    });
+                } else {
+                    handleResponse(message);
+                }
 
                 break;
             default:

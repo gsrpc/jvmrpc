@@ -10,6 +10,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.util.HashedWheelTimer;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -37,11 +38,10 @@ public final class TCPServerBuilder {
 
     private EventLoopGroup childGroup;
 
-    private ThreadFactory threadFactory = Executors.defaultThreadFactory();
+    private Executor taskExecutor;
 
-    private int ioThreads = Runtime.getRuntime().availableProcessors() * 2;
+    private HashedWheelTimer wheelTimer;
 
-    private Executor taskExecutor = Executors.newFixedThreadPool(ioThreads);
 
     public TCPServerBuilder(InetSocketAddress address) {
 
@@ -50,23 +50,16 @@ public final class TCPServerBuilder {
         bootstrap.channel(NioServerSocketChannel.class);
     }
 
-    public TCPServerBuilder taskExecutor(Executor executor) {
+    public TCPServerBuilder dispatcherExecutor(Executor executor) {
         this.taskExecutor = executor;
         return this;
     }
 
-    public TCPServerBuilder threadFactory(ThreadFactory threadFactory) {
-        this.threadFactory = threadFactory;
-        return this;
-    }
-
-    public TCPServerBuilder ioThreads(int threads) {
-
-        this.ioThreads = threads;
-
-        return this;
-    }
-
+    /**
+     * set new acceptor event loop group
+     * @param group the new io event loop group
+     * @return the TCP server factory object self
+     */
     public TCPServerBuilder group(EventLoopGroup group) {
 
         this.group = group;
@@ -74,6 +67,11 @@ public final class TCPServerBuilder {
         return this;
     }
 
+    /**
+     * set new sub rector event loop group
+     * @param group new sub rector event loop group
+     * @return the TCP server factory object self
+     */
     public TCPServerBuilder childGroup(EventLoopGroup group) {
 
         this.childGroup = group;
@@ -81,8 +79,13 @@ public final class TCPServerBuilder {
         return this;
     }
 
-
-    public TCPServerBuilder option(ChannelOption option, boolean flag) {
+    /**
+     * set tcp connection option
+     * @param option new option
+     * @param flag new option flag
+     * @return the TCP server factory object self
+     */
+    public <T> TCPServerBuilder option(ChannelOption<T> option, T flag) {
         bootstrap.option(option, flag);
         return this;
     }
@@ -94,25 +97,39 @@ public final class TCPServerBuilder {
         return this;
     }
 
+    /**
+     * set reconnect params
+     * @param relay reconnect relay duration time
+     * @param unit duration unit
+     * @return the TCP server factory object self
+     */
     public TCPServerBuilder reconnect(int relay, TimeUnit unit) {
         this.relay = relay;
         this.unit = unit;
         return this;
     }
 
-    public TCPServer Build() throws Exception {
-
+    /**
+     * create new tcp server with listen address
+     * @param address listen address
+     * @return tcp server object
+     */
+    public synchronized  TCPServer build(InetSocketAddress address) {
         final TCPServer server = new TCPServer(bootstrap, address);
 
 
         if (group == null) {
-            group = new NioEventLoopGroup(this.ioThreads,this.threadFactory);
+            group = new NioEventLoopGroup();
         }
 
         if (childGroup != null) {
             bootstrap.group(group, childGroup);
         } else {
             bootstrap.group(group);
+        }
+
+        if (wheelTimer == null) {
+            wheelTimer = HashedWheelTimerSingleton.instance();
         }
 
         bootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
@@ -132,7 +149,7 @@ public final class TCPServerBuilder {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
 
-                        SinkHandler handler = new SinkHandler(null,server,taskExecutor);
+                        SinkHandler handler = new SinkHandler(null,server,taskExecutor,wheelTimer);
 
                         ch.pipeline().addLast(handler);
                     }
@@ -147,5 +164,22 @@ public final class TCPServerBuilder {
         }
 
         return server;
+    }
+
+    /**
+     * create tcp server,this method is deprecated use build method instead
+     * @return TCP server
+     */
+    @Deprecated
+    public synchronized TCPServer Build() {
+        return build(address);
+    }
+
+    /**
+     * create tcp server
+     * @return TCP server
+     */
+    public synchronized TCPServer build() {
+        return build(address);
     }
 }

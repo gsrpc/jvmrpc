@@ -10,6 +10,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.util.HashedWheelTimer;
 
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
@@ -34,11 +35,9 @@ public final class TCPClientBuilder {
 
     private EventLoopGroup eventLoopGroup;
 
-    private int ioThreads = Runtime.getRuntime().availableProcessors() * 2;
+    private Executor taskExecutor;
 
-    private ThreadFactory threadFactory = Executors.defaultThreadFactory();
-
-    private Executor taskExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
+    private HashedWheelTimer wheelTimer;
 
     public TCPClientBuilder(RemoteResolver resolver) {
 
@@ -56,18 +55,35 @@ public final class TCPClientBuilder {
     }
 
 
-    public TCPClientBuilder threadFactory(ThreadFactory threadFactory) {
-        this.threadFactory = threadFactory;
-        return this;
-    }
-
-    public TCPClientBuilder taskExecutor(Executor executor) {
+    /**
+     * set the dispatchers executor
+     * @param executor dispatcher executor
+     * @return the tcp client factory object self
+     */
+    public TCPClientBuilder dispacherExecutor(Executor executor) {
         this.taskExecutor = executor;
         return this;
     }
 
+    /**
+     * set customer hashed wheel timer
+     * @param hashedWheelTimer customer hashed wheel timer
+     * @return the tcp client factory object self
+     */
+    public TCPClientBuilder wheelTimer(HashedWheelTimer hashedWheelTimer) {
 
-    public TCPClientBuilder option(ChannelOption option, boolean flag) {
+        this.wheelTimer = hashedWheelTimer;
+
+        return this;
+    }
+
+    /**
+     * set the tcp connection option
+     * @param option option
+     * @param flag flag
+     * @return the tcp client factory object self
+     */
+    public <T> TCPClientBuilder option(ChannelOption<T> option, T flag) {
         bootstrap.option(option, flag);
         return this;
     }
@@ -85,14 +101,21 @@ public final class TCPClientBuilder {
         return this;
     }
 
-    public TCPClient Build() throws Exception {
-
+    /**
+     * create new tcp client
+     * @return new tcp client object
+     */
+    public synchronized TCPClient build() {
         final TCPClient client = new TCPClient(bootstrap, resolver,this.relay,this.unit);
 
 
         if (eventLoopGroup == null) {
-            eventLoopGroup = new NioEventLoopGroup(ioThreads,threadFactory);
+            eventLoopGroup = new NioEventLoopGroup();
             bootstrap.group(eventLoopGroup);
+        }
+
+        if (wheelTimer == null) {
+            wheelTimer = HashedWheelTimerSingleton.instance();
         }
 
         bootstrap.handler(new ChannelInitializer<SocketChannel>() {
@@ -117,7 +140,7 @@ public final class TCPClientBuilder {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
 
-                        SinkHandler handler = new SinkHandler(client,client,taskExecutor);
+                        SinkHandler handler = new SinkHandler(client,client,taskExecutor,wheelTimer);
 
                         ch.pipeline().addLast("sink", handler);
                     }
@@ -126,5 +149,15 @@ public final class TCPClientBuilder {
         });
 
         return client;
+    }
+
+    /**
+     * create new tcp client,this method was deprecated using build method instead
+     * @return new tcp client object
+     */
+    @Deprecated
+    public synchronized TCPClient Build() {
+
+        return build();
     }
 }

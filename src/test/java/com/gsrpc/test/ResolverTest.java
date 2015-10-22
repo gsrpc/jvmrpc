@@ -43,7 +43,7 @@ public class ResolverTest {
                     }
                 }));
             }
-        }).Build();
+        }).build();
 
         tcpServer.registerDispatcher((short)0,new DNSResolverDispatcher(new MockDNSResolver()));
 
@@ -89,7 +89,7 @@ public class ResolverTest {
     @Test
     public void testNoException() throws Exception {
 
-        TCPClient client = tcpClientBuilder.Build();
+        TCPClient client = tcpClientBuilder.build();
 
         client.connect();
 
@@ -104,7 +104,7 @@ public class ResolverTest {
     @Test(expected = UnknownException.class)
     public void testUnknownException() throws Exception {
 
-        TCPClient client = tcpClientBuilder.Build();
+        TCPClient client = tcpClientBuilder.build();
 
         client.connect();
 
@@ -119,7 +119,7 @@ public class ResolverTest {
     @Test(expected = ResourceException.class)
     public void testResourceException() throws Exception {
 
-        TCPClient client = tcpClientBuilder.Build();
+        TCPClient client = tcpClientBuilder.build();
 
         client.connect();
 
