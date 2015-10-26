@@ -79,7 +79,7 @@ public class DHClientHandler extends MessageToMessageCodec<Message, Message> {
 
         whoAmI.marshal(writer);
 
-        message.setContent(writer.Content());
+        message.setContent(writer.getContent());
 
         ctx.channel().writeAndFlush(message);
     }

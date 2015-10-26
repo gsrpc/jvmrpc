@@ -1,22 +1,33 @@
 package com.gsrpc;
 
-import com.gsrpc.Reader;
-
 import java.nio.ByteBuffer;
 
 import com.gsrpc.Writer;
 
+import com.gsrpc.Reader;
 
-/*
- * WhoAmI generate by gs2java,don't modify it manually
- */
-public class WhoAmI
+
+public class WhoAmI 
 {
 
     private  Device iD = new Device();
 
     private  byte[] context = new byte[0];
 
+
+
+    public WhoAmI(){
+
+    }
+
+
+    public WhoAmI(Device iD, byte[] context ) {
+    
+        this.iD = iD;
+    
+        this.context = context;
+    
+    }
 
 
     public Device getID()
@@ -37,6 +48,8 @@ public class WhoAmI
         this.context = arg;
     }
 
+
+
     public void marshal(Writer writer)  throws Exception
     {
         writer.writeByte((byte)2);
@@ -51,7 +64,7 @@ public class WhoAmI
     public void unmarshal(Reader reader) throws Exception
     {
         byte __fields = reader.readByte();
-        
+
         {
             byte tag = reader.readByte();
 
@@ -64,7 +77,7 @@ public class WhoAmI
             }
         }
 
-        
+
         {
             byte tag = reader.readByte();
 
@@ -77,7 +90,8 @@ public class WhoAmI
             }
         }
 
-        
+
+
         for(int i = 0; i < (int)__fields; i ++) {
             byte tag = reader.readByte();
 
@@ -88,4 +102,5 @@ public class WhoAmI
             reader.readSkip(tag);
         }
     }
+
 }

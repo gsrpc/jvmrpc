@@ -1,12 +1,13 @@
 package com.gsrpc.test;
 
 
+import com.gsrpc.BufferReader;
+import com.gsrpc.BufferWriter;
 import com.gsrpc.Device;
-import com.gsrpc.Future;
 import com.gsrpc.net.*;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
-import org.junit.Before;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
@@ -15,7 +16,6 @@ import java.math.BigInteger;
 import java.net.InetSocketAddress;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @RunWith(BlockJUnit4ClassRunner.class)
 public class ResolverTest {
@@ -99,6 +99,48 @@ public class ResolverTest {
 
         resolver.resolve("localhost", 5).util();
 
+        resolver.asyncResolve("hello");
+
+    }
+
+    @Test
+    public void testCompatible() throws Exception {
+        C0 c0 = new C0();
+
+        c0.setC1(1);
+        c0.setC3(3.1415f);
+
+        c0.getC2().setF3("hello world".getBytes());
+
+        BufferWriter writer = new BufferWriter();
+
+        c0.marshal(writer);
+
+        BufferReader reader = new BufferReader(writer.getContent());
+
+        C1 c1 = new C1();
+
+        c1.unmarshal(reader);
+
+        Assert.assertEquals(new String(c1.getC2().getF3()), "hello world");
+
+        Assert.assertEquals(c1.getC1(), 1);
+
+        Assert.assertEquals(0,c1.getC3(), 3.1415f);
+
+        c1.getC2().setF4(new String[]{"hello", "world"});
+
+        c1.setC3(2.0f);
+
+        writer.reset();
+
+        c1.marshal(writer);
+
+        reader.setContent(writer.getContent());
+
+        c0.unmarshal(reader);
+
+        Assert.assertEquals(0f,2.0f,c0.getC3());
     }
 
     @Test(expected = UnknownException.class)

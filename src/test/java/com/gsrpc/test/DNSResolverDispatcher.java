@@ -36,6 +36,7 @@ public final class DNSResolverDispatcher implements com.gsrpc.Dispatcher {
 
 
                 
+                
                 try{
                 
                     IPV4 ret = this.service.resolve(arg0);
@@ -54,7 +55,7 @@ public final class DNSResolverDispatcher implements com.gsrpc.Dispatcher {
 
 					ret.marshal(writer);
 
-					returnParam = writer.Content();
+					returnParam = writer.getContent();
 
 				}
 
@@ -74,7 +75,7 @@ public final class DNSResolverDispatcher implements com.gsrpc.Dispatcher {
                     callReturn.setID(call.getID());
                     callReturn.setService(call.getService());
                     callReturn.setException((byte)0);
-                    callReturn.setContent(writer.Content());
+                    callReturn.setContent(writer.getContent());
 
                     return callReturn;
                 } catch(ResourceException e) {
@@ -87,10 +88,25 @@ public final class DNSResolverDispatcher implements com.gsrpc.Dispatcher {
                     callReturn.setID(call.getID());
                     callReturn.setService(call.getService());
                     callReturn.setException((byte)1);
-                    callReturn.setContent(writer.Content());
+                    callReturn.setContent(writer.getContent());
 
                     return callReturn;
                 }
+            }
+        
+        case 1: {
+				String arg0 = "";
+
+				{
+
+					com.gsrpc.BufferReader reader = new com.gsrpc.BufferReader(call.getParams()[0].getContent());
+
+					arg0 = reader.readString();
+
+				}
+
+
+                
             }
         
         }

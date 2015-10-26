@@ -1,16 +1,13 @@
 package com.gsrpc;
 
+import com.gsrpc.Writer;
+
 import com.gsrpc.Reader;
 
 import java.nio.ByteBuffer;
 
-import com.gsrpc.Writer;
 
-
-/*
- * Device generate by gs2java,don't modify it manually
- */
-public class Device
+public class Device 
 {
 
     private  String iD = "";
@@ -25,6 +22,28 @@ public class Device
 
     private  String appKey = "";
 
+
+
+    public Device(){
+
+    }
+
+
+    public Device(String iD, String type, ArchType arch, OSType oS, String oSVersion, String appKey ) {
+    
+        this.iD = iD;
+    
+        this.type = type;
+    
+        this.arch = arch;
+    
+        this.oS = oS;
+    
+        this.oSVersion = oSVersion;
+    
+        this.appKey = appKey;
+    
+    }
 
 
     public String getID()
@@ -81,6 +100,8 @@ public class Device
         this.appKey = arg;
     }
 
+
+
     public void marshal(Writer writer)  throws Exception
     {
         writer.writeByte((byte)6);
@@ -107,7 +128,7 @@ public class Device
     public void unmarshal(Reader reader) throws Exception
     {
         byte __fields = reader.readByte();
-        
+
         {
             byte tag = reader.readByte();
 
@@ -120,7 +141,7 @@ public class Device
             }
         }
 
-        
+
         {
             byte tag = reader.readByte();
 
@@ -133,7 +154,7 @@ public class Device
             }
         }
 
-        
+
         {
             byte tag = reader.readByte();
 
@@ -146,7 +167,7 @@ public class Device
             }
         }
 
-        
+
         {
             byte tag = reader.readByte();
 
@@ -159,7 +180,7 @@ public class Device
             }
         }
 
-        
+
         {
             byte tag = reader.readByte();
 
@@ -172,7 +193,7 @@ public class Device
             }
         }
 
-        
+
         {
             byte tag = reader.readByte();
 
@@ -185,7 +206,8 @@ public class Device
             }
         }
 
-        
+
+
         for(int i = 0; i < (int)__fields; i ++) {
             byte tag = reader.readByte();
 
@@ -196,4 +218,5 @@ public class Device
             reader.readSkip(tag);
         }
     }
+
 }

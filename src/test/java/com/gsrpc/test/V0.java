@@ -1,64 +1,64 @@
-package com.gsrpc;
-
-import com.gsrpc.Writer;
+package com.gsrpc.test;
 
 import com.gsrpc.Reader;
 
 import java.nio.ByteBuffer;
 
+import com.gsrpc.Writer;
 
-public class Message 
+
+public class V0 
 {
 
-    private  Code code = Code.Heartbeat;
+    private  int f1 = 0;
 
-    private  byte agent = 0;
+    private  float f2 = 0;
 
-    private  byte[] content = new byte[0];
+    private  byte[] f3 = new byte[0];
 
 
 
-    public Message(){
+    public V0(){
 
     }
 
 
-    public Message(Code code, byte agent, byte[] content ) {
+    public V0(int f1, float f2, byte[] f3 ) {
     
-        this.code = code;
+        this.f1 = f1;
     
-        this.agent = agent;
+        this.f2 = f2;
     
-        this.content = content;
+        this.f3 = f3;
     
     }
 
 
-    public Code getCode()
+    public int getF1()
     {
-        return this.code;
+        return this.f1;
     }
-    public void setCode(Code arg)
+    public void setF1(int arg)
     {
-        this.code = arg;
-    }
-
-    public byte getAgent()
-    {
-        return this.agent;
-    }
-    public void setAgent(byte arg)
-    {
-        this.agent = arg;
+        this.f1 = arg;
     }
 
-    public byte[] getContent()
+    public float getF2()
     {
-        return this.content;
+        return this.f2;
     }
-    public void setContent(byte[] arg)
+    public void setF2(float arg)
     {
-        this.content = arg;
+        this.f2 = arg;
+    }
+
+    public byte[] getF3()
+    {
+        return this.f3;
+    }
+    public void setF3(byte[] arg)
+    {
+        this.f3 = arg;
     }
 
 
@@ -67,14 +67,14 @@ public class Message
     {
         writer.writeByte((byte)3);
 
-        writer.writeByte((byte)com.gsrpc.Tag.I8.getValue());
-        code.marshal(writer);
+        writer.writeByte((byte)com.gsrpc.Tag.I32.getValue());
+        writer.writeInt32(f1);
 
-        writer.writeByte((byte)com.gsrpc.Tag.I8.getValue());
-        writer.writeByte(agent);
+        writer.writeByte((byte)com.gsrpc.Tag.I32.getValue());
+        writer.writeFloat32(f2);
 
         writer.writeByte((byte)((com.gsrpc.Tag.I8.getValue() << 4)|com.gsrpc.Tag.List.getValue()));
-        writer.writeBytes(content);
+        writer.writeBytes(f3);
 
     }
     public void unmarshal(Reader reader) throws Exception
@@ -85,7 +85,7 @@ public class Message
             byte tag = reader.readByte();
 
             if(tag != com.gsrpc.Tag.Skip.getValue()) {
-                code = Code.unmarshal(reader);
+                f1 = reader.readInt32();
             }
 
             if(-- __fields == 0) {
@@ -98,7 +98,7 @@ public class Message
             byte tag = reader.readByte();
 
             if(tag != com.gsrpc.Tag.Skip.getValue()) {
-                agent = reader.readByte();
+                f2 = reader.readFloat32();
             }
 
             if(-- __fields == 0) {
@@ -111,7 +111,7 @@ public class Message
             byte tag = reader.readByte();
 
             if(tag != com.gsrpc.Tag.Skip.getValue()) {
-                content = reader.readBytes();
+                f3 = reader.readBytes();
             }
 
             if(-- __fields == 0) {

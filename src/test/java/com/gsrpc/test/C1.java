@@ -1,4 +1,4 @@
-package com.gsrpc;
+package com.gsrpc.test;
 
 import com.gsrpc.Writer;
 
@@ -7,71 +7,71 @@ import com.gsrpc.Reader;
 import java.nio.ByteBuffer;
 
 
-public class Response 
+public class C1 
 {
 
-    private  short iD = 0;
+    private  int c1 = 0;
 
-    private  short service = 0;
+    private  V1 c2 = new V1();
 
-    private  byte exception = 0;
+    private  float c3 = 0;
 
-    private  byte[] content = new byte[0];
+    private  double c4 = 0;
 
 
 
-    public Response(){
+    public C1(){
 
     }
 
 
-    public Response(short iD, short service, byte exception, byte[] content ) {
+    public C1(int c1, V1 c2, float c3, double c4 ) {
     
-        this.iD = iD;
+        this.c1 = c1;
     
-        this.service = service;
+        this.c2 = c2;
     
-        this.exception = exception;
+        this.c3 = c3;
     
-        this.content = content;
+        this.c4 = c4;
     
     }
 
 
-    public short getID()
+    public int getC1()
     {
-        return this.iD;
+        return this.c1;
     }
-    public void setID(short arg)
+    public void setC1(int arg)
     {
-        this.iD = arg;
-    }
-
-    public short getService()
-    {
-        return this.service;
-    }
-    public void setService(short arg)
-    {
-        this.service = arg;
+        this.c1 = arg;
     }
 
-    public byte getException()
+    public V1 getC2()
     {
-        return this.exception;
+        return this.c2;
     }
-    public void setException(byte arg)
+    public void setC2(V1 arg)
     {
-        this.exception = arg;
+        this.c2 = arg;
     }
 
-    public byte[] getContent()
+    public float getC3()
     {
-        return this.content;
+        return this.c3;
     }
-    public void setContent(byte[] arg)
+    public void setC3(float arg)
     {
-        this.content = arg;
+        this.c3 = arg;
+    }
+
+    public double getC4()
+    {
+        return this.c4;
+    }
+    public void setC4(double arg)
+    {
+        this.c4 = arg;
     }
 
 
@@ -80,17 +80,17 @@ public class Response
     {
         writer.writeByte((byte)4);
 
-        writer.writeByte((byte)com.gsrpc.Tag.I16.getValue());
-        writer.writeUInt16(iD);
+        writer.writeByte((byte)com.gsrpc.Tag.I32.getValue());
+        writer.writeInt32(c1);
 
-        writer.writeByte((byte)com.gsrpc.Tag.I16.getValue());
-        writer.writeUInt16(service);
+        writer.writeByte((byte)com.gsrpc.Tag.Table.getValue());
+        c2.marshal(writer);
 
-        writer.writeByte((byte)com.gsrpc.Tag.I8.getValue());
-        writer.writeSByte(exception);
+        writer.writeByte((byte)com.gsrpc.Tag.I32.getValue());
+        writer.writeFloat32(c3);
 
-        writer.writeByte((byte)((com.gsrpc.Tag.I8.getValue() << 4)|com.gsrpc.Tag.List.getValue()));
-        writer.writeBytes(content);
+        writer.writeByte((byte)com.gsrpc.Tag.I64.getValue());
+        writer.writeFloat64(c4);
 
     }
     public void unmarshal(Reader reader) throws Exception
@@ -101,7 +101,7 @@ public class Response
             byte tag = reader.readByte();
 
             if(tag != com.gsrpc.Tag.Skip.getValue()) {
-                iD = reader.readUInt16();
+                c1 = reader.readInt32();
             }
 
             if(-- __fields == 0) {
@@ -114,7 +114,7 @@ public class Response
             byte tag = reader.readByte();
 
             if(tag != com.gsrpc.Tag.Skip.getValue()) {
-                service = reader.readUInt16();
+                c2.unmarshal(reader);
             }
 
             if(-- __fields == 0) {
@@ -127,7 +127,7 @@ public class Response
             byte tag = reader.readByte();
 
             if(tag != com.gsrpc.Tag.Skip.getValue()) {
-                exception = reader.readSByte();
+                c3 = reader.readFloat32();
             }
 
             if(-- __fields == 0) {
@@ -140,7 +140,7 @@ public class Response
             byte tag = reader.readByte();
 
             if(tag != com.gsrpc.Tag.Skip.getValue()) {
-                content = reader.readBytes();
+                c4 = reader.readFloat64();
             }
 
             if(-- __fields == 0) {

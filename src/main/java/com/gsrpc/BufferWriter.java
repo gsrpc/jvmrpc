@@ -7,7 +7,7 @@ public class BufferWriter implements Writer {
 
     private ByteArrayOutputStream content = new ByteArrayOutputStream();
 
-    public byte[] Content() {
+    public byte[] getContent() {
         return this.content.toByteArray();
     }
 

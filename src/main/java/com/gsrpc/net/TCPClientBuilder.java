@@ -83,10 +83,8 @@ public final class TCPClientBuilder {
      * @param flag flag
      * @return the tcp client factory object self
      */
-    public <T> TCPClientBuilder option(ChannelOption<T> option, T flag) {
-        bootstrap.option(option, flag);
-        return this;
-    }
+
+
 
     public TCPClientBuilder handler(ChannelInitializer<SocketChannel> handler) {
 

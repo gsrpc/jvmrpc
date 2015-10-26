@@ -7,10 +7,7 @@ import java.nio.ByteBuffer;
 import com.gsrpc.Writer;
 
 
-/*
- * Request generate by gs2java,don't modify it manually
- */
-public class Request
+public class Request 
 {
 
     private  short iD = 0;
@@ -21,6 +18,24 @@ public class Request
 
     private  Param[] params = new Param[0];
 
+
+
+    public Request(){
+
+    }
+
+
+    public Request(short iD, short method, short service, Param[] params ) {
+    
+        this.iD = iD;
+    
+        this.method = method;
+    
+        this.service = service;
+    
+        this.params = params;
+    
+    }
 
 
     public short getID()
@@ -59,6 +74,8 @@ public class Request
         this.params = arg;
     }
 
+
+
     public void marshal(Writer writer)  throws Exception
     {
         writer.writeByte((byte)4);
@@ -85,7 +102,7 @@ public class Request
     public void unmarshal(Reader reader) throws Exception
     {
         byte __fields = reader.readByte();
-        
+
         {
             byte tag = reader.readByte();
 
@@ -98,7 +115,7 @@ public class Request
             }
         }
 
-        
+
         {
             byte tag = reader.readByte();
 
@@ -111,7 +128,7 @@ public class Request
             }
         }
 
-        
+
         {
             byte tag = reader.readByte();
 
@@ -124,7 +141,7 @@ public class Request
             }
         }
 
-        
+
         {
             byte tag = reader.readByte();
 
@@ -149,7 +166,8 @@ public class Request
             }
         }
 
-        
+
+
         for(int i = 0; i < (int)__fields; i ++) {
             byte tag = reader.readByte();
 
@@ -160,4 +178,5 @@ public class Request
             reader.readSkip(tag);
         }
     }
+
 }

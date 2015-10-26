@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * tcp server handler
  */
-public final class TCPServer implements MessageChannel,Dispatcher {
+public final class TCPServer implements Dispatcher {
 
 
     private final ServerBootstrap bootstrap;
@@ -25,8 +25,6 @@ public final class TCPServer implements MessageChannel,Dispatcher {
     private AtomicBoolean closed = new AtomicBoolean(false);
 
     private AtomicReference<ChannelFuture> future = new AtomicReference<ChannelFuture>(null);
-
-    private AtomicReference<SinkHandler> channel = new AtomicReference<SinkHandler>(null);
 
     private final ConcurrentHashMap<Short,Dispatcher> dispatchers = new ConcurrentHashMap<Short, Dispatcher>();
 
@@ -87,30 +85,6 @@ public final class TCPServer implements MessageChannel,Dispatcher {
         if(bootstrap.childGroup() != null) {
             bootstrap.childGroup().shutdownGracefully();
         }
-    }
-
-
-    @Override
-    public void send(Message message) throws Exception {
-        MessageChannel messageChannel = channel.get();
-
-        if(messageChannel == null) {
-            throw new BrokenChannel();
-        }
-
-        messageChannel.send(message);
-    }
-
-    @Override
-    public void send(Request call, Callback callback) throws Exception {
-
-        MessageChannel messageChannel = channel.get();
-
-        if(messageChannel == null) {
-            throw new BrokenChannel();
-        }
-
-        messageChannel.send(call,callback);
     }
 
 

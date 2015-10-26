@@ -144,7 +144,22 @@ public class SinkHandler extends ChannelInboundHandlerAdapter implements Message
 
         call.marshal(writer);
 
-        message.setContent(writer.Content());
+        message.setContent(writer.getContent());
+
+        send(message);
+    }
+
+    @Override
+    public void post(Request call) throws Exception {
+        Message message = new Message();
+
+        message.setCode(Code.Request);
+
+        BufferWriter writer = new BufferWriter();
+
+        call.marshal(writer);
+
+        message.setContent(writer.getContent());
 
         send(message);
     }
@@ -168,15 +183,18 @@ public class SinkHandler extends ChannelInboundHandlerAdapter implements Message
 
         Response response = dispatcher.Dispatch(request);
 
-        message.setCode(Code.Response);
+        if (response != null) {
+            message.setCode(Code.Response);
 
-        BufferWriter writer = new BufferWriter();
+            BufferWriter writer = new BufferWriter();
 
-        response.marshal(writer);
+            response.marshal(writer);
 
-        message.setContent(writer.Content());
+            message.setContent(writer.getContent());
 
-        send(message);
+            send(message);
+        }
+
     }
 
     private void handleResponse(Message message) throws Exception{

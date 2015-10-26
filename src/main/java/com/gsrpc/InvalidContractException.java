@@ -11,9 +11,13 @@ public class InvalidContractException extends Exception
 {
 
 
+
+
     public InvalidContractException() {
     
     }
+
+
 
 
     public void marshal(Writer writer)  throws Exception
@@ -25,6 +29,7 @@ public class InvalidContractException extends Exception
     {
         byte __fields = reader.readByte();
 
+
         for(int i = 0; i < (int)__fields; i ++) {
             byte tag = reader.readByte();
 
@@ -35,4 +40,5 @@ public class InvalidContractException extends Exception
             reader.readSkip(tag);
         }
     }
+
 }

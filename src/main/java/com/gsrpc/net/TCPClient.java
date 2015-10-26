@@ -188,6 +188,17 @@ public final class TCPClient implements Reconnect, StateListener, MessageChannel
         messageChannel.send(call, callback);
     }
 
+    @Override
+    public void post(Request call) throws Exception {
+        MessageChannel messageChannel = sinkHandler.get();
+
+        if(messageChannel == null) {
+            throw new BrokenChannel();
+        }
+
+        messageChannel.post(call);
+    }
+
 
     public Future<Void> connected() {
         return this.connected;

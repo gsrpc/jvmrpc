@@ -1,22 +1,33 @@
 package com.gsrpc;
 
+import com.gsrpc.Writer;
+
 import com.gsrpc.Reader;
 
 import java.nio.ByteBuffer;
 
-import com.gsrpc.Writer;
 
-
-/*
- * Tunnel generate by gs2java,don't modify it manually
- */
-public class Tunnel
+public class Tunnel 
 {
 
     private  Device iD = new Device();
 
     private  Message message = new Message();
 
+
+
+    public Tunnel(){
+
+    }
+
+
+    public Tunnel(Device iD, Message message ) {
+    
+        this.iD = iD;
+    
+        this.message = message;
+    
+    }
 
 
     public Device getID()
@@ -37,6 +48,8 @@ public class Tunnel
         this.message = arg;
     }
 
+
+
     public void marshal(Writer writer)  throws Exception
     {
         writer.writeByte((byte)2);
@@ -51,7 +64,7 @@ public class Tunnel
     public void unmarshal(Reader reader) throws Exception
     {
         byte __fields = reader.readByte();
-        
+
         {
             byte tag = reader.readByte();
 
@@ -64,7 +77,7 @@ public class Tunnel
             }
         }
 
-        
+
         {
             byte tag = reader.readByte();
 
@@ -77,7 +90,8 @@ public class Tunnel
             }
         }
 
-        
+
+
         for(int i = 0; i < (int)__fields; i ++) {
             byte tag = reader.readByte();
 
@@ -88,4 +102,5 @@ public class Tunnel
             reader.readSkip(tag);
         }
     }
+
 }

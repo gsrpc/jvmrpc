@@ -1,22 +1,17 @@
 package com.gsrpc;
 
-import com.gsrpc.Writer;
-
 import com.gsrpc.Reader;
 
 import java.nio.ByteBuffer;
 
+import com.gsrpc.Writer;
 
-public class UnmarshalException extends Exception
+
+/*
+ * InvalidContract generate by gs2java,don't modify it manually
+ */
+public class InvalidContract
 {
-
-
-
-
-    public UnmarshalException() {
-    
-    }
-
 
 
 
@@ -28,8 +23,7 @@ public class UnmarshalException extends Exception
     public void unmarshal(Reader reader) throws Exception
     {
         byte __fields = reader.readByte();
-
-
+        
         for(int i = 0; i < (int)__fields; i ++) {
             byte tag = reader.readByte();
 
@@ -40,5 +34,4 @@ public class UnmarshalException extends Exception
             reader.readSkip(tag);
         }
     }
-
 }

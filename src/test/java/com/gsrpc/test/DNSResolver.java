@@ -12,5 +12,7 @@ public interface DNSResolver {
 
     IPV4 resolve (String domain) throws Exception;
 
+    void asyncResolve (String domain) throws Exception;
+
 }
 

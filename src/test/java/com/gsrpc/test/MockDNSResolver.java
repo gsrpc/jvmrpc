@@ -24,4 +24,9 @@ public class MockDNSResolver implements DNSResolver {
 
         throw new ResourceException();
     }
+
+    @Override
+    public void asyncResolve(String domain) throws Exception {
+
+    }
 }

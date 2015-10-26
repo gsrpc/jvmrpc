@@ -46,7 +46,7 @@ public final class DNSResolverRPC {
 
 			com.gsrpc.Param param = new com.gsrpc.Param();
 
-			param.setContent(writer.Content());
+			param.setContent(writer.getContent());
 
 			params[0] = (param);
 
@@ -56,6 +56,7 @@ public final class DNSResolverRPC {
         request.setParams(params);
         
 
+        
         com.gsrpc.Promise<IPV4> promise = new com.gsrpc.Promise<IPV4>(timeout){
             @Override
             public void Return(Exception e,com.gsrpc.Response callReturn){
@@ -123,6 +124,40 @@ public final class DNSResolverRPC {
         this.net.send(request,promise);
 
         return promise;
+        
+    }
+    
+    public void asyncResolve(String arg0) throws Exception {
+
+        com.gsrpc.Request request = new com.gsrpc.Request();
+
+        request.setService(this.serviceID);
+
+        request.setMethod((short)1);
+
+        
+        com.gsrpc.Param[] params = new com.gsrpc.Param[1];
+		{
+
+			com.gsrpc.BufferWriter writer = new com.gsrpc.BufferWriter();
+
+			writer.writeString(arg0);
+
+			com.gsrpc.Param param = new com.gsrpc.Param();
+
+			param.setContent(writer.getContent());
+
+			params[0] = (param);
+
+		}
+
+
+        request.setParams(params);
+        
+
+        
+        this.net.post(request);
+        
     }
     
 }

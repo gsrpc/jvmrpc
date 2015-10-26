@@ -23,13 +23,13 @@ public class MessageOutHandler extends MessageToByteEncoder<Message> {
 
         msg.marshal(writer);
 
-        byte[] content = writer.Content();
+        byte[] content = writer.getContent();
 
         writer.reset();
 
         writer.writeUInt16((short) (content.length & 0xffff));
 
-        out.writeBytes(writer.Content());
+        out.writeBytes(writer.getContent());
 
         out.writeBytes(content);
     }

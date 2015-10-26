@@ -11,9 +11,13 @@ public class ResourceException extends Exception
 {
 
 
+
+
     public ResourceException() {
     
     }
+
+
 
 
     public void marshal(Writer writer)  throws Exception
@@ -25,6 +29,7 @@ public class ResourceException extends Exception
     {
         byte __fields = reader.readByte();
 
+
         for(int i = 0; i < (int)__fields; i ++) {
             byte tag = reader.readByte();
 
@@ -35,4 +40,5 @@ public class ResourceException extends Exception
             reader.readSkip(tag);
         }
     }
+
 }

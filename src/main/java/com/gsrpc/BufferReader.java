@@ -128,13 +128,7 @@ public class BufferReader implements Reader {
         } else if(tag == Tag.Table.getValue()) {
             readUInt16();
         } else if(tag == Tag.String.getValue()) {
-            byte fields = readByte(); // read fields counter
-
-            for (int i =0; i < fields; i ++) {
-                tag = readByte();
-                readSkip(tag);
-            }
-
+            readString();
         } else {
             if ((tag& 0xf) == Tag.List.getValue()) {
                 short length = readUInt16();

@@ -7,14 +7,23 @@ import com.gsrpc.Writer;
 import com.gsrpc.Reader;
 
 
-/*
- * Param generate by gs2java,don't modify it manually
- */
-public class Param
+public class Param 
 {
 
     private  byte[] content = new byte[0];
 
+
+
+    public Param(){
+
+    }
+
+
+    public Param(byte[] content ) {
+    
+        this.content = content;
+    
+    }
 
 
     public byte[] getContent()
@@ -25,6 +34,8 @@ public class Param
     {
         this.content = arg;
     }
+
+
 
     public void marshal(Writer writer)  throws Exception
     {
@@ -37,7 +48,7 @@ public class Param
     public void unmarshal(Reader reader) throws Exception
     {
         byte __fields = reader.readByte();
-        
+
         {
             byte tag = reader.readByte();
 
@@ -50,7 +61,8 @@ public class Param
             }
         }
 
-        
+
+
         for(int i = 0; i < (int)__fields; i ++) {
             byte tag = reader.readByte();
 
@@ -61,4 +73,5 @@ public class Param
             reader.readSkip(tag);
         }
     }
+
 }
