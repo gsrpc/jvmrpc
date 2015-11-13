@@ -1,22 +1,22 @@
 package com.gsrpc;
 
+import java.nio.ByteBuffer;
+
 import com.gsrpc.Writer;
 
 import com.gsrpc.Reader;
-
-import java.nio.ByteBuffer;
 
 
 public class Response 
 {
 
-    private  short iD = 0;
-
-    private  short service = 0;
+    private  int iD = 0;
 
     private  byte exception = 0;
 
     private  byte[] content = new byte[0];
+
+    private  long trace = 0;
 
 
 
@@ -25,35 +25,26 @@ public class Response
     }
 
 
-    public Response(short iD, short service, byte exception, byte[] content ) {
+    public Response(int iD, byte exception, byte[] content, long trace ) {
     
         this.iD = iD;
-    
-        this.service = service;
     
         this.exception = exception;
     
         this.content = content;
     
+        this.trace = trace;
+    
     }
 
 
-    public short getID()
+    public int getID()
     {
         return this.iD;
     }
-    public void setID(short arg)
+    public void setID(int arg)
     {
         this.iD = arg;
-    }
-
-    public short getService()
-    {
-        return this.service;
-    }
-    public void setService(short arg)
-    {
-        this.service = arg;
     }
 
     public byte getException()
@@ -74,91 +65,50 @@ public class Response
         this.content = arg;
     }
 
+    public long getTrace()
+    {
+        return this.trace;
+    }
+    public void setTrace(long arg)
+    {
+        this.trace = arg;
+    }
+
 
 
     public void marshal(Writer writer)  throws Exception
     {
-        writer.writeByte((byte)4);
 
-        writer.writeByte((byte)com.gsrpc.Tag.I16.getValue());
-        writer.writeUInt16(iD);
+        writer.writeUInt32(iD);
 
-        writer.writeByte((byte)com.gsrpc.Tag.I16.getValue());
-        writer.writeUInt16(service);
-
-        writer.writeByte((byte)com.gsrpc.Tag.I8.getValue());
         writer.writeSByte(exception);
 
-        writer.writeByte((byte)((com.gsrpc.Tag.I8.getValue() << 4)|com.gsrpc.Tag.List.getValue()));
         writer.writeBytes(content);
 
+        writer.writeUInt64(trace);
+
     }
+
     public void unmarshal(Reader reader) throws Exception
     {
-        byte __fields = reader.readByte();
 
         {
-            byte tag = reader.readByte();
-
-            if(tag != com.gsrpc.Tag.Skip.getValue()) {
-                iD = reader.readUInt16();
-            }
-
-            if(-- __fields == 0) {
-                return;
-            }
+            iD = reader.readUInt32();
         }
-
 
         {
-            byte tag = reader.readByte();
-
-            if(tag != com.gsrpc.Tag.Skip.getValue()) {
-                service = reader.readUInt16();
-            }
-
-            if(-- __fields == 0) {
-                return;
-            }
+            exception = reader.readSByte();
         }
-
 
         {
-            byte tag = reader.readByte();
-
-            if(tag != com.gsrpc.Tag.Skip.getValue()) {
-                exception = reader.readSByte();
-            }
-
-            if(-- __fields == 0) {
-                return;
-            }
+            content = reader.readBytes();
         }
-
 
         {
-            byte tag = reader.readByte();
-
-            if(tag != com.gsrpc.Tag.Skip.getValue()) {
-                content = reader.readBytes();
-            }
-
-            if(-- __fields == 0) {
-                return;
-            }
+            trace = reader.readUInt64();
         }
 
-
-
-        for(int i = 0; i < (int)__fields; i ++) {
-            byte tag = reader.readByte();
-
-            if (tag == com.gsrpc.Tag.Skip.getValue()) {
-                continue;
-            }
-
-            reader.readSkip(tag);
-        }
     }
+
 
 }

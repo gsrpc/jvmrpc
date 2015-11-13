@@ -1,10 +1,10 @@
 package com.gsrpc;
 
+import java.nio.ByteBuffer;
+
 import com.gsrpc.Writer;
 
 import com.gsrpc.Reader;
-
-import java.nio.ByteBuffer;
 
 
 public class Message 
@@ -65,71 +65,31 @@ public class Message
 
     public void marshal(Writer writer)  throws Exception
     {
-        writer.writeByte((byte)3);
 
-        writer.writeByte((byte)com.gsrpc.Tag.I8.getValue());
         code.marshal(writer);
 
-        writer.writeByte((byte)com.gsrpc.Tag.I8.getValue());
         writer.writeByte(agent);
 
-        writer.writeByte((byte)((com.gsrpc.Tag.I8.getValue() << 4)|com.gsrpc.Tag.List.getValue()));
         writer.writeBytes(content);
 
     }
+
     public void unmarshal(Reader reader) throws Exception
     {
-        byte __fields = reader.readByte();
 
         {
-            byte tag = reader.readByte();
-
-            if(tag != com.gsrpc.Tag.Skip.getValue()) {
-                code = Code.unmarshal(reader);
-            }
-
-            if(-- __fields == 0) {
-                return;
-            }
+            code = Code.unmarshal(reader);
         }
-
 
         {
-            byte tag = reader.readByte();
-
-            if(tag != com.gsrpc.Tag.Skip.getValue()) {
-                agent = reader.readByte();
-            }
-
-            if(-- __fields == 0) {
-                return;
-            }
+            agent = reader.readByte();
         }
-
 
         {
-            byte tag = reader.readByte();
-
-            if(tag != com.gsrpc.Tag.Skip.getValue()) {
-                content = reader.readBytes();
-            }
-
-            if(-- __fields == 0) {
-                return;
-            }
+            content = reader.readBytes();
         }
 
-
-
-        for(int i = 0; i < (int)__fields; i ++) {
-            byte tag = reader.readByte();
-
-            if (tag == com.gsrpc.Tag.Skip.getValue()) {
-                continue;
-            }
-
-            reader.readSkip(tag);
-        }
     }
+
 
 }

@@ -1,10 +1,14 @@
 package com.gsrpc;
 
-import com.gsrpc.Writer;
-
 import com.gsrpc.Reader;
 
 import java.nio.ByteBuffer;
+
+import com.gsrpc.Device;
+
+import com.gsrpc.Message;
+
+import com.gsrpc.Writer;
 
 
 public class Tunnel 
@@ -52,55 +56,25 @@ public class Tunnel
 
     public void marshal(Writer writer)  throws Exception
     {
-        writer.writeByte((byte)2);
 
-        writer.writeByte((byte)com.gsrpc.Tag.Table.getValue());
         iD.marshal(writer);
 
-        writer.writeByte((byte)com.gsrpc.Tag.Table.getValue());
         message.marshal(writer);
 
     }
+
     public void unmarshal(Reader reader) throws Exception
     {
-        byte __fields = reader.readByte();
 
         {
-            byte tag = reader.readByte();
-
-            if(tag != com.gsrpc.Tag.Skip.getValue()) {
-                iD.unmarshal(reader);
-            }
-
-            if(-- __fields == 0) {
-                return;
-            }
+            iD.unmarshal(reader);
         }
-
 
         {
-            byte tag = reader.readByte();
-
-            if(tag != com.gsrpc.Tag.Skip.getValue()) {
-                message.unmarshal(reader);
-            }
-
-            if(-- __fields == 0) {
-                return;
-            }
+            message.unmarshal(reader);
         }
 
-
-
-        for(int i = 0; i < (int)__fields; i ++) {
-            byte tag = reader.readByte();
-
-            if (tag == com.gsrpc.Tag.Skip.getValue()) {
-                continue;
-            }
-
-            reader.readSkip(tag);
-        }
     }
+
 
 }

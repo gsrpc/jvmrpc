@@ -1,10 +1,10 @@
 package com.gsrpc;
 
+import java.nio.ByteBuffer;
+
 import com.gsrpc.Writer;
 
 import com.gsrpc.Reader;
-
-import java.nio.ByteBuffer;
 
 
 /*
@@ -17,7 +17,8 @@ public enum Code {
 	Response((byte)3),
 	Accept((byte)4),
 	Reject((byte)5),
-	Tunnel((byte)6);
+	Tunnel((byte)6),
+	TunnelWhoAmI((byte)7);
     private byte value;
     Code(byte val){
         this.value = val;
@@ -47,6 +48,9 @@ public enum Code {
         
         case 6:
             return "Tunnel";
+        
+        case 7:
+            return "TunnelWhoAmI";
         
         }
         return "Code#" + this.value;
@@ -84,6 +88,9 @@ public enum Code {
         
         case 6:
             return Code.Tunnel;
+        
+        case 7:
+            return Code.TunnelWhoAmI;
         
         }
         throw new Exception("unknown enum constant :" + code);

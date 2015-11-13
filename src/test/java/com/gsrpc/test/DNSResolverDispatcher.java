@@ -1,10 +1,10 @@
 package com.gsrpc.test;
 
+import java.nio.ByteBuffer;
+
 import com.gsrpc.Writer;
 
 import com.gsrpc.Reader;
-
-import java.nio.ByteBuffer;
 
 
 
@@ -43,7 +43,6 @@ public final class DNSResolverDispatcher implements com.gsrpc.Dispatcher {
 
                     com.gsrpc.Response callReturn = new com.gsrpc.Response();
                     callReturn.setID(call.getID());
-                    callReturn.setService(call.getService());
                     callReturn.setException((byte)-1);
 
                     
@@ -73,7 +72,6 @@ public final class DNSResolverDispatcher implements com.gsrpc.Dispatcher {
 
                     com.gsrpc.Response callReturn = new com.gsrpc.Response();
                     callReturn.setID(call.getID());
-                    callReturn.setService(call.getService());
                     callReturn.setException((byte)0);
                     callReturn.setContent(writer.getContent());
 
@@ -86,12 +84,12 @@ public final class DNSResolverDispatcher implements com.gsrpc.Dispatcher {
 
                     com.gsrpc.Response callReturn = new com.gsrpc.Response();
                     callReturn.setID(call.getID());
-                    callReturn.setService(call.getService());
                     callReturn.setException((byte)1);
                     callReturn.setContent(writer.getContent());
 
                     return callReturn;
                 }
+                
             }
         
         case 1: {
@@ -106,6 +104,8 @@ public final class DNSResolverDispatcher implements com.gsrpc.Dispatcher {
 				}
 
 
+                
+                this.service.asyncResolve(arg0);
                 
             }
         

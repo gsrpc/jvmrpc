@@ -125,7 +125,7 @@ public class SinkHandler extends ChannelInboundHandlerAdapter implements Message
             }
         }
 
-        final Short id = call.getID();
+        final int id = call.getID();
 
         callback.setTimer(wheelTimer.newTimeout(new TimerTask() {
             @Override

@@ -1,10 +1,10 @@
 package com.gsrpc.test;
 
+import java.nio.ByteBuffer;
+
 import com.gsrpc.Writer;
 
 import com.gsrpc.Reader;
-
-import java.nio.ByteBuffer;
 
 
 public class V1 

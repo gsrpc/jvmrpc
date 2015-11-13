@@ -10,13 +10,17 @@ import com.gsrpc.Writer;
 public class Request 
 {
 
-    private  short iD = 0;
-
-    private  short method = 0;
+    private  int iD = 0;
 
     private  short service = 0;
 
+    private  short method = 0;
+
     private  Param[] params = new Param[0];
+
+    private  long trace = 0;
+
+    private  int prev = 0;
 
 
 
@@ -25,35 +29,30 @@ public class Request
     }
 
 
-    public Request(short iD, short method, short service, Param[] params ) {
+    public Request(int iD, short service, short method, Param[] params, long trace, int prev ) {
     
         this.iD = iD;
     
-        this.method = method;
-    
         this.service = service;
+    
+        this.method = method;
     
         this.params = params;
     
+        this.trace = trace;
+    
+        this.prev = prev;
+    
     }
 
 
-    public short getID()
+    public int getID()
     {
         return this.iD;
     }
-    public void setID(short arg)
+    public void setID(int arg)
     {
         this.iD = arg;
-    }
-
-    public short getMethod()
-    {
-        return this.method;
-    }
-    public void setMethod(short arg)
-    {
-        this.method = arg;
     }
 
     public short getService()
@@ -65,6 +64,15 @@ public class Request
         this.service = arg;
     }
 
+    public short getMethod()
+    {
+        return this.method;
+    }
+    public void setMethod(short arg)
+    {
+        this.method = arg;
+    }
+
     public Param[] getParams()
     {
         return this.params;
@@ -74,22 +82,35 @@ public class Request
         this.params = arg;
     }
 
+    public long getTrace()
+    {
+        return this.trace;
+    }
+    public void setTrace(long arg)
+    {
+        this.trace = arg;
+    }
+
+    public int getPrev()
+    {
+        return this.prev;
+    }
+    public void setPrev(int arg)
+    {
+        this.prev = arg;
+    }
+
 
 
     public void marshal(Writer writer)  throws Exception
     {
-        writer.writeByte((byte)4);
 
-        writer.writeByte((byte)com.gsrpc.Tag.I16.getValue());
-        writer.writeUInt16(iD);
+        writer.writeUInt32(iD);
 
-        writer.writeByte((byte)com.gsrpc.Tag.I16.getValue());
-        writer.writeUInt16(method);
-
-        writer.writeByte((byte)com.gsrpc.Tag.I16.getValue());
         writer.writeUInt16(service);
 
-        writer.writeByte((byte)((com.gsrpc.Tag.Table.getValue() << 4)|com.gsrpc.Tag.List.getValue()));
+        writer.writeUInt16(method);
+
         writer.writeUInt16((short)params.length);
 
 		for(Param v3 : params){
@@ -98,55 +119,29 @@ public class Request
 
 		}
 
+        writer.writeUInt64(trace);
+
+        writer.writeUInt32(prev);
+
     }
+
     public void unmarshal(Reader reader) throws Exception
     {
-        byte __fields = reader.readByte();
 
         {
-            byte tag = reader.readByte();
-
-            if(tag != com.gsrpc.Tag.Skip.getValue()) {
-                iD = reader.readUInt16();
-            }
-
-            if(-- __fields == 0) {
-                return;
-            }
+            iD = reader.readUInt32();
         }
 
-
         {
-            byte tag = reader.readByte();
-
-            if(tag != com.gsrpc.Tag.Skip.getValue()) {
-                method = reader.readUInt16();
-            }
-
-            if(-- __fields == 0) {
-                return;
-            }
+            service = reader.readUInt16();
         }
 
-
         {
-            byte tag = reader.readByte();
-
-            if(tag != com.gsrpc.Tag.Skip.getValue()) {
-                service = reader.readUInt16();
-            }
-
-            if(-- __fields == 0) {
-                return;
-            }
+            method = reader.readUInt16();
         }
 
-
         {
-            byte tag = reader.readByte();
-
-            if(tag != com.gsrpc.Tag.Skip.getValue()) {
-                int max3 = reader.readUInt16();
+            int max3 = reader.readUInt16();
 
 		params = new Param[max3];
 
@@ -159,24 +154,17 @@ public class Request
 			params[i3] = v3;
 
 		}
-            }
-
-            if(-- __fields == 0) {
-                return;
-            }
         }
 
-
-
-        for(int i = 0; i < (int)__fields; i ++) {
-            byte tag = reader.readByte();
-
-            if (tag == com.gsrpc.Tag.Skip.getValue()) {
-                continue;
-            }
-
-            reader.readSkip(tag);
+        {
+            trace = reader.readUInt64();
         }
+
+        {
+            prev = reader.readUInt32();
+        }
+
     }
+
 
 }
