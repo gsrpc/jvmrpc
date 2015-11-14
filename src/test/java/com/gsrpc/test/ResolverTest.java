@@ -56,7 +56,7 @@ public class ResolverTest {
                     }
                 }));
             }
-        }).dispatcherExecutor(Executors.newSingleThreadExecutor()).build();
+        }).build();
 
 
         // create client builder factory
@@ -84,7 +84,7 @@ public class ResolverTest {
                 socketChannel.pipeline().addLast(new HeartbeatEchoHandler(5, TimeUnit.SECONDS));
 
             }
-        }).dispacherExecutor(Executors.newSingleThreadExecutor()).reconnect(2, java.util.concurrent.TimeUnit.SECONDS);
+        }).reconnect(2, java.util.concurrent.TimeUnit.SECONDS);
     }
 
     private Device createDevice() {

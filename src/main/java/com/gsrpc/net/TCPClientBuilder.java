@@ -32,7 +32,7 @@ public final class TCPClientBuilder {
 
     private EventLoopGroup eventLoopGroup;
 
-    private Executor taskExecutor;
+    private Executor taskExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
 
     private HashedWheelTimer wheelTimer;
 

@@ -39,7 +39,7 @@ public final class TCPServerBuilder {
 
     private EventLoopGroup childGroup;
 
-    private Executor taskExecutor;
+    private Executor taskExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);;
 
     private HashedWheelTimer wheelTimer;
 
