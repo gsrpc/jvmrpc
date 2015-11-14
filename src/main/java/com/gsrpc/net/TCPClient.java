@@ -233,7 +233,7 @@ public final class TCPClient implements Reconnect, StateListener, MessageChannel
     }
 
     @Override
-    public Response Dispatch(Request request) throws Exception {
+    public Response dispatch(Request request) throws Exception {
 
         Dispatcher dispatcher = this.dispatchers.get(request.getService());
 
@@ -241,6 +241,6 @@ public final class TCPClient implements Reconnect, StateListener, MessageChannel
             throw new InvalidContractException();
         }
 
-        return dispatcher.Dispatch(request);
+        return dispatcher.dispatch(request);
     }
 }

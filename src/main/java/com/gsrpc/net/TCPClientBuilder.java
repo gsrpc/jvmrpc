@@ -13,10 +13,7 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.HashedWheelTimer;
 
 import java.util.ArrayList;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * The {@link TCPClient} builder
@@ -76,15 +73,6 @@ public final class TCPClientBuilder {
 
         return this;
     }
-
-    /**
-     * set the tcp connection option
-     * @param option option
-     * @param flag flag
-     * @return the tcp client factory object self
-     */
-
-
 
     public TCPClientBuilder handler(ChannelInitializer<SocketChannel> handler) {
 

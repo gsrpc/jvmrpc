@@ -1,13 +1,11 @@
 package com.gsrpc.net;
 
 
-import com.gsrpc.*;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 
 import java.net.InetSocketAddress;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -15,7 +13,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * tcp server handler
  */
-public final class TCPServer implements Dispatcher {
+public final class TCPServer {
 
 
     private final ServerBootstrap bootstrap;
@@ -25,8 +23,6 @@ public final class TCPServer implements Dispatcher {
     private AtomicBoolean closed = new AtomicBoolean(false);
 
     private AtomicReference<ChannelFuture> future = new AtomicReference<ChannelFuture>(null);
-
-    private final ConcurrentHashMap<Short,Dispatcher> dispatchers = new ConcurrentHashMap<Short, Dispatcher>();
 
     public TCPServer(ServerBootstrap bootstrap, InetSocketAddress address) {
 
@@ -85,27 +81,5 @@ public final class TCPServer implements Dispatcher {
         if(bootstrap.childGroup() != null) {
             bootstrap.childGroup().shutdownGracefully();
         }
-    }
-
-
-    public void registerDispatcher(short id, Dispatcher dispatcher) {
-        dispatchers.put(id,dispatcher);
-    }
-
-
-    public void unregisterDispatcher(short id, Dispatcher dispatcher) {
-        dispatchers.remove(id,dispatcher);
-    }
-
-    @Override
-    public Response Dispatch(Request request) throws Exception {
-
-        Dispatcher dispatcher = this.dispatchers.get(request.getService());
-
-        if (dispatcher == null) {
-            throw new InvalidContractException();
-        }
-
-        return dispatcher.Dispatch(request);
     }
 }

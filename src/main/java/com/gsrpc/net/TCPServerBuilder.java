@@ -29,6 +29,7 @@ public final class TCPServerBuilder {
     private TimeUnit unit;
 
     private final InetSocketAddress address;
+    private final ServerListener listener;
 
     private final ServerBootstrap bootstrap = new ServerBootstrap();
 
@@ -43,9 +44,10 @@ public final class TCPServerBuilder {
     private HashedWheelTimer wheelTimer;
 
 
-    public TCPServerBuilder(InetSocketAddress address) {
+    public TCPServerBuilder(InetSocketAddress address,ServerListener listener) {
 
         this.address = address;
+        this.listener = listener;
 
         bootstrap.channel(NioServerSocketChannel.class);
     }
@@ -149,9 +151,13 @@ public final class TCPServerBuilder {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
 
-                        SinkHandler handler = new SinkHandler(null,server,taskExecutor,wheelTimer);
+                        ServerHandler serverHandler = new ServerHandler(listener);
 
-                        ch.pipeline().addLast(handler);
+                        SinkHandler handler = new SinkHandler(null,serverHandler,taskExecutor,wheelTimer);
+
+                        serverHandler.setMessageChannel(handler);
+
+                        ch.pipeline().addLast(handler,serverHandler);
                     }
                 });
             }

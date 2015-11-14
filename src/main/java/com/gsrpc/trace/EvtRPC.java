@@ -1,7 +1,5 @@
 package com.gsrpc.trace;
 
-import com.gsrpc.Writer;
-
 import com.gsrpc.Reader;
 
 import java.nio.ByteBuffer;
@@ -9,6 +7,8 @@ import java.nio.ByteBuffer;
 import com.gsrpc.KV;
 
 import com.gsrpc.Time;
+
+import com.gsrpc.Writer;
 
 
 public class EvtRPC 

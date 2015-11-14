@@ -38,9 +38,12 @@ public class DHServerHandler extends MessageToMessageCodec<Message, Message> {
      * @param resolver dh key resolver
      */
     public DHServerHandler(DHKeyResolver resolver) {
-
-
         this.resolver = resolver;
+    }
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        // skip channel active event
     }
 
     @Override
@@ -100,6 +103,8 @@ public class DHServerHandler extends MessageToMessageCodec<Message, Message> {
             decoder = Cipher.getInstance("DES/ECB/PKCS5Padding");
 
             decoder.init(Cipher.DECRYPT_MODE, keyFactory.generateSecret(dks), new SecureRandom());
+
+            channelHandlerContext.fireChannelActive();
 
             return;
         }

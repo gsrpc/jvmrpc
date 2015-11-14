@@ -181,7 +181,7 @@ public class SinkHandler extends ChannelInboundHandlerAdapter implements Message
 
         request.unmarshal(new BufferReader(message.getContent()));
 
-        Response response = dispatcher.Dispatch(request);
+        Response response = dispatcher.dispatch(request);
 
         if (response != null) {
             message.setCode(Code.Response);

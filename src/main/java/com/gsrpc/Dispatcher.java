@@ -1,5 +1,5 @@
 package com.gsrpc;
 
 public interface Dispatcher {
-    Response Dispatch(Request request) throws Exception;
+    Response dispatch(Request request) throws Exception;
 }

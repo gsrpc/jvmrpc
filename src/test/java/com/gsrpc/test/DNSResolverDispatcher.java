@@ -1,10 +1,10 @@
 package com.gsrpc.test;
 
-import java.nio.ByteBuffer;
-
 import com.gsrpc.Writer;
 
 import com.gsrpc.Reader;
+
+import java.nio.ByteBuffer;
 
 
 
@@ -19,7 +19,7 @@ public final class DNSResolverDispatcher implements com.gsrpc.Dispatcher {
         this.service = service;
     }
 
-    public com.gsrpc.Response Dispatch(com.gsrpc.Request call) throws Exception
+    public com.gsrpc.Response dispatch(com.gsrpc.Request call) throws Exception
     {
         switch(call.getMethod()){
         

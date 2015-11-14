@@ -4,6 +4,7 @@ package com.gsrpc.test;
 import com.gsrpc.BufferReader;
 import com.gsrpc.BufferWriter;
 import com.gsrpc.Device;
+import com.gsrpc.DispatcherChannel;
 import com.gsrpc.net.*;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
@@ -15,6 +16,7 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import java.math.BigInteger;
 import java.net.InetSocketAddress;
 import java.util.UUID;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 @RunWith(BlockJUnit4ClassRunner.class)
@@ -28,7 +30,18 @@ public class ResolverTest {
 
         // create server builder factory
         tcpServer = new TCPServerBuilder(
-                new InetSocketAddress("localhost", 5120)
+                new InetSocketAddress("localhost", 5120),
+                new ServerListener() {
+                    @Override
+                    public void addClient(DispatcherChannel dispatcherChannel) {
+                        dispatcherChannel.addService( (short)0,new DNSResolverDispatcher(new MockDNSResolver(dispatcherChannel)));
+                    }
+
+                    @Override
+                    public void removeClient(DispatcherChannel dispatcherChannel) {
+
+                    }
+                }
         ).handler(new ChannelInitializer<SocketChannel>() {
 
             @Override
@@ -43,10 +56,7 @@ public class ResolverTest {
                     }
                 }));
             }
-        }).build();
-
-        tcpServer.registerDispatcher((short)0,new DNSResolverDispatcher(new MockDNSResolver()));
-
+        }).dispatcherExecutor(Executors.newSingleThreadExecutor()).build();
 
 
         // create client builder factory
@@ -74,7 +84,7 @@ public class ResolverTest {
                 socketChannel.pipeline().addLast(new HeartbeatEchoHandler(5, TimeUnit.SECONDS));
 
             }
-        }).reconnect(2, java.util.concurrent.TimeUnit.SECONDS);
+        }).dispacherExecutor(Executors.newSingleThreadExecutor()).reconnect(2, java.util.concurrent.TimeUnit.SECONDS);
     }
 
     private Device createDevice() {
@@ -94,6 +104,8 @@ public class ResolverTest {
         client.connect();
 
         client.connected().util();
+
+        client.registerDispatcher((short)1,new DNSListenerDispatcher(new MockDNSListener()));
 
         DNSResolverRPC resolver = new DNSResolverRPC(client,(short)0);
 

@@ -48,3 +48,7 @@ contract DNSResolver {
     @gslang.Async
     void AsyncResolve(string domain);
 }
+
+contract DNSListener {
+    void Changed(string domain,IPV4 ip);
+}
