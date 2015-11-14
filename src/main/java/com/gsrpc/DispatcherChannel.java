@@ -5,7 +5,7 @@ package com.gsrpc;
  */
 public interface DispatcherChannel extends Channel,Dispatcher {
     void addService(short id,Dispatcher dispatcher);
-    void addService(NamedDispatcher dispatcher);
+    void addService(NamedDispatcher dispatcher) throws UnknownServiceException;
     void removeService(short id,Dispatcher dispatcher);
-    void removeService(NamedDispatcher dispatcher);
+    void removeService(NamedDispatcher dispatcher) throws UnknownServiceException;
 }

@@ -47,18 +47,18 @@ final class ServerHandler extends ChannelInboundHandlerAdapter implements Dispat
     }
 
     @Override
-    public void addService(NamedDispatcher dispatcher) {
-
-    }
-
-    @Override
     public void removeService(short id, Dispatcher dispatcher) {
         dispatchers.remove(id,dispatcher);
     }
 
     @Override
-    public void removeService(NamedDispatcher dispatcher) {
+    public void addService(NamedDispatcher dispatcher) throws UnknownServiceException {
+        addService(Register.getInstance().getID(dispatcher.name()),dispatcher);
+    }
 
+    @Override
+    public void removeService(NamedDispatcher dispatcher) throws UnknownServiceException {
+        removeService(Register.getInstance().getID(dispatcher.name()),dispatcher);
     }
 
     @Override
