@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 
 
 public interface DNSListener {
+    public static final String NAME = "com.gsrpc.test.DNSListener";
 
     void changed (String domain, IPV4 ip) throws Exception;
 

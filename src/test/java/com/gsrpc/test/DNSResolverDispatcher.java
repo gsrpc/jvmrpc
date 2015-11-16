@@ -11,12 +11,16 @@ import java.nio.ByteBuffer;
 /*
  * DNSResolver generate by gs2java,don't modify it manually
  */
-public final class DNSResolverDispatcher implements com.gsrpc.Dispatcher {
+public final class DNSResolverDispatcher implements com.gsrpc.NamedDispatcher {
 
     private DNSResolver service;
 
     public DNSResolverDispatcher(DNSResolver service) {
         this.service = service;
+    }
+
+    public String name() {
+        return "com.gsrpc.test.DNSResolver";
     }
 
     public com.gsrpc.Response dispatch(com.gsrpc.Request call) throws Exception

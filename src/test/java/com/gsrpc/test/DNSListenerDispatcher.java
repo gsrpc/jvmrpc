@@ -1,22 +1,26 @@
 package com.gsrpc.test;
 
+import com.gsrpc.Writer;
+
 import com.gsrpc.Reader;
 
 import java.nio.ByteBuffer;
-
-import com.gsrpc.Writer;
 
 
 
 /*
  * DNSListener generate by gs2java,don't modify it manually
  */
-public final class DNSListenerDispatcher implements com.gsrpc.Dispatcher {
+public final class DNSListenerDispatcher implements com.gsrpc.NamedDispatcher {
 
     private DNSListener service;
 
     public DNSListenerDispatcher(DNSListener service) {
         this.service = service;
+    }
+
+    public String name() {
+        return "com.gsrpc.test.DNSListener";
     }
 
     public com.gsrpc.Response dispatch(com.gsrpc.Request call) throws Exception

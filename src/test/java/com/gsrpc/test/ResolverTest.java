@@ -33,8 +33,8 @@ public class ResolverTest {
                 new InetSocketAddress("localhost", 5120),
                 new ServerListener() {
                     @Override
-                    public void addClient(DispatcherChannel dispatcherChannel) {
-                        dispatcherChannel.addService( (short)0,new DNSResolverDispatcher(new MockDNSResolver(dispatcherChannel)));
+                    public void addClient(DispatcherChannel dispatcherChannel) throws Exception {
+                        dispatcherChannel.addService(new DNSResolverDispatcher(new MockDNSResolver(dispatcherChannel)));
                     }
 
                     @Override

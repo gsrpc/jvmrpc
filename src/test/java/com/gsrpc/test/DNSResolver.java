@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 
 
 public interface DNSResolver {
+    public static final String NAME = "com.gsrpc.test.DNSResolver";
 
     IPV4 resolve (String domain) throws Exception;
 
