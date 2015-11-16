@@ -1,10 +1,7 @@
 package com.gsrpc.test;
 
 
-import com.gsrpc.BufferReader;
-import com.gsrpc.BufferWriter;
-import com.gsrpc.Device;
-import com.gsrpc.DispatcherChannel;
+import com.gsrpc.*;
 import com.gsrpc.net.*;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
@@ -15,8 +12,9 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 
 import java.math.BigInteger;
 import java.net.InetSocketAddress;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 @RunWith(BlockJUnit4ClassRunner.class)
@@ -27,6 +25,14 @@ public class ResolverTest {
     private final TCPClientBuilder tcpClientBuilder;
 
     public ResolverTest() throws Exception {
+
+        Map<String,Short> register = new HashMap<String, Short>();
+
+        register.put(DNSResolver.NAME,(short)0);
+
+        register.put(DNSListener.NAME,(short)1);
+
+        Register.getInstance().update(register);
 
         // create server builder factory
         tcpServer = new TCPServerBuilder(
@@ -105,7 +111,7 @@ public class ResolverTest {
 
         client.connected().util();
 
-        client.registerDispatcher((short)1,new DNSListenerDispatcher(new MockDNSListener()));
+        client.registerDispatcher(new DNSListenerDispatcher(new MockDNSListener()));
 
         DNSResolverRPC resolver = new DNSResolverRPC(client,(short)0);
 

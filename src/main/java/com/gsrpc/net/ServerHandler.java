@@ -14,7 +14,7 @@ final class ServerHandler extends ChannelInboundHandlerAdapter implements Dispat
     private final ServerListener listener;
     private MessageChannel messageChannel;
 
-    private final ConcurrentHashMap<Short,Dispatcher> dispatchers = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Short,Dispatcher> dispatchers = new ConcurrentHashMap<Short, Dispatcher>();
 
     public void setMessageChannel(MessageChannel messageChannel) {
         this.messageChannel = messageChannel;

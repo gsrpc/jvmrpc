@@ -214,6 +214,10 @@ public final class TCPClient implements Reconnect, StateListener, MessageChannel
         dispatchers.put(id, dispatcher);
     }
 
+    public void registerDispatcher(NamedDispatcher dispatcher) throws UnknownServiceException {
+        dispatchers.put(Register.getInstance().getID(dispatcher.name()), dispatcher);
+    }
+
 
     public void unregisterDispatcher(short id, Dispatcher dispatcher) {
         dispatchers.remove(id, dispatcher);
