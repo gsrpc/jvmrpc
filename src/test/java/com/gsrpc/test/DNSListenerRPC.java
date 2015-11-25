@@ -1,10 +1,10 @@
 package com.gsrpc.test;
 
-import java.nio.ByteBuffer;
-
 import com.gsrpc.Writer;
 
 import com.gsrpc.Reader;
+
+import java.nio.ByteBuffer;
 
 
 /*
@@ -25,6 +25,11 @@ public final class DNSListenerRPC {
     public DNSListenerRPC(com.gsrpc.Channel net, short serviceID){
         this.net = net;
         this.serviceID = serviceID;
+    }
+
+    public DNSListenerRPC(com.gsrpc.Channel net) throws Exception {
+        this.net = net;
+        this.serviceID = com.gsrpc.Register.getInstance().getID(DNSListener.NAME);
     }
 
     

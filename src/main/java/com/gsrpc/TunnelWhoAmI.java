@@ -1,14 +1,14 @@
 package com.gsrpc;
 
-import java.nio.ByteBuffer;
+import com.gsrpc.Message;
 
 import com.gsrpc.Device;
-
-import com.gsrpc.Message;
 
 import com.gsrpc.Writer;
 
 import com.gsrpc.Reader;
+
+import java.nio.ByteBuffer;
 
 
 public class TunnelWhoAmI 

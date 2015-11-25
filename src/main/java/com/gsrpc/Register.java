@@ -10,9 +10,9 @@ public final class Register {
 
     private static final Register instance  = new Register();
 
-    private ConcurrentHashMap<String,Short> nameIndexer = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String,Short> nameIndexer = new ConcurrentHashMap<String,Short>();
 
-    private ConcurrentHashMap<Short,String> indexer = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<Short,String> indexer = new ConcurrentHashMap<Short,String>();
 
     private Register(){
 

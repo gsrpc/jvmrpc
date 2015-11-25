@@ -27,6 +27,11 @@ public final class DNSResolverRPC {
         this.serviceID = serviceID;
     }
 
+    public DNSResolverRPC(com.gsrpc.Channel net) throws Exception {
+        this.net = net;
+        this.serviceID = com.gsrpc.Register.getInstance().getID(DNSResolver.NAME);
+    }
+
     
     public com.gsrpc.Future<IPV4> resolve(String arg0, final int timeout) throws Exception {
 
