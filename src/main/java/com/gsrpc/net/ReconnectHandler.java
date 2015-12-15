@@ -31,8 +31,19 @@ public class ReconnectHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+
+
+        super.channelActive(ctx);
+
+        reconnect.connected();
+    }
+
+    @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
+
+        reconnect.disconnected();
 
         ctx.channel().eventLoop().schedule(new Runnable() {
             @Override

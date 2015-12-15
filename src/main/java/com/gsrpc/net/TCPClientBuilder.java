@@ -114,9 +114,7 @@ public final class TCPClientBuilder {
 
                 ch.pipeline().addLast(new MessageInHandler(), new MessageOutHandler());
 
-                if (relay != -1) {
-                    ch.pipeline().addLast(new ReconnectHandler(client, relay, unit));
-                }
+                ch.pipeline().addLast(new ReconnectHandler(client, relay, unit));
 
                 if (handler != null) {
                     ch.pipeline().addLast(handler);
@@ -126,7 +124,7 @@ public final class TCPClientBuilder {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
 
-                        SinkHandler handler = new SinkHandler(client,client,taskExecutor,wheelTimer);
+                        SinkHandler handler = new SinkHandler(client,taskExecutor,wheelTimer);
 
                         ch.pipeline().addLast("sink", handler);
                     }

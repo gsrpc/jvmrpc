@@ -23,8 +23,6 @@ public class SinkHandler extends ChannelInboundHandlerAdapter implements Message
 
     private final ConcurrentHashMap<Integer, Callback> promises = new ConcurrentHashMap<Integer, Callback>();
 
-    private final StateListener stateListener;
-
     private final Dispatcher dispatcher;
 
     private final Executor taskExecutor;
@@ -33,35 +31,12 @@ public class SinkHandler extends ChannelInboundHandlerAdapter implements Message
 
     private final AtomicReference<io.netty.channel.Channel> channelRef = new AtomicReference<io.netty.channel.Channel>(null);
 
-    public SinkHandler(StateListener stateListener,Dispatcher dispatcher,Executor taskExecutor,HashedWheelTimer wheelTimer) {
-        this.stateListener = stateListener;
+    public SinkHandler(Dispatcher dispatcher,Executor taskExecutor,HashedWheelTimer wheelTimer) {
         this.taskExecutor = taskExecutor;
         this.dispatcher = dispatcher;
         this.wheelTimer = wheelTimer;
     }
 
-    @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        super.channelActive(ctx);
-
-        channelRef.set(ctx.channel());
-
-        if (this.stateListener != null) {
-            this.stateListener.stateChanged(State.Connected);
-        }
-    }
-
-    @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-
-        super.channelInactive(ctx);
-
-        channelRef.set(null);
-
-        if (this.stateListener != null) {
-            this.stateListener.stateChanged(State.Closed);
-        }
-    }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {

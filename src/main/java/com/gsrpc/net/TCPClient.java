@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * gsrpc tcp client
  */
-public final class TCPClient implements Reconnect, StateListener, MessageChannel,Dispatcher {
+public final class TCPClient implements Reconnect, MessageChannel,Dispatcher {
 
     private static final Logger logger = LoggerFactory.getLogger(TCPClient.class);
 
@@ -51,6 +51,8 @@ public final class TCPClient implements Reconnect, StateListener, MessageChannel
         }
     };
 
+    private AtomicReference<StateListener> stateListener = new AtomicReference<StateListener>();
+
     TCPClient(Bootstrap bootstrap, RemoteResolver resolver, int relay, TimeUnit unit) {
 
         this.bootstrap = bootstrap;
@@ -58,6 +60,13 @@ public final class TCPClient implements Reconnect, StateListener, MessageChannel
         this.resolver = resolver;
         this.relay = relay;
         this.unit = unit;
+    }
+
+    public void connect(StateListener stateListener) throws Exception {
+
+        this.stateListener.set(stateListener);
+
+        connect();
     }
 
     public void connect() throws Exception {
@@ -162,6 +171,24 @@ public final class TCPClient implements Reconnect, StateListener, MessageChannel
 
 
     @Override
+    public void disconnected() {
+        StateListener listener = stateListener.get();
+
+        if(listener != null) {
+            listener.stateChanged(State.Disconnect);
+        }
+    }
+
+    @Override
+    public void connected() {
+        StateListener listener = stateListener.get();
+
+        if(listener != null) {
+            listener.stateChanged(State.Connected);
+        }
+    }
+
+    @Override
     public void reconnect() throws Exception {
         connect();
     }
@@ -200,14 +227,6 @@ public final class TCPClient implements Reconnect, StateListener, MessageChannel
     }
 
 
-    public Future<Void> connected() {
-        return this.connected;
-    }
-
-
-    public Future<Void> closed() {
-        return this.closed;
-    }
 
 
     public void registerDispatcher(short id, Dispatcher dispatcher) {
@@ -221,19 +240,6 @@ public final class TCPClient implements Reconnect, StateListener, MessageChannel
 
     public void unregisterDispatcher(short id, Dispatcher dispatcher) {
         dispatchers.remove(id, dispatcher);
-    }
-
-    @Override
-    public void stateChanged(State state) {
-        switch (state){
-
-            case Connected:
-                this.connected.Notify(null,null);
-                break;
-            case Closed:
-                this.closed.Notify(null,null);
-                break;
-        }
     }
 
     @Override

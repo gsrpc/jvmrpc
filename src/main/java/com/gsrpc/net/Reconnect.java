@@ -1,7 +1,11 @@
 package com.gsrpc.net;
 
 
-public interface Reconnect {
+interface Reconnect {
+
+    void disconnected();
 
     void reconnect() throws Exception;
+
+    void connected();
 }

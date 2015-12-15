@@ -153,7 +153,7 @@ public final class TCPServerBuilder {
 
                         ServerHandler serverHandler = new ServerHandler(listener);
 
-                        SinkHandler handler = new SinkHandler(null,serverHandler,taskExecutor,wheelTimer);
+                        SinkHandler handler = new SinkHandler(serverHandler,taskExecutor,wheelTimer);
 
                         serverHandler.setMessageChannel(handler);
 

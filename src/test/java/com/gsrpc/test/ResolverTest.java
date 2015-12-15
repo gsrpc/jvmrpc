@@ -107,9 +107,18 @@ public class ResolverTest {
 
         TCPClient client = tcpClientBuilder.build();
 
-        client.connect();
+        synchronized (this){
+            this.wait();
+        }
 
-        client.connected().util();
+        client.connect(new StateListener() {
+            @Override
+            public void stateChanged(State state) {
+                synchronized (ResolverTest.this){
+                    ResolverTest.this.notify();
+                }
+            }
+        });
 
         client.registerDispatcher(new DNSListenerDispatcher(new MockDNSListener()));
 
@@ -166,9 +175,18 @@ public class ResolverTest {
 
         TCPClient client = tcpClientBuilder.build();
 
-        client.connect();
+        synchronized (this){
+            this.wait();
+        }
 
-        client.connected().util();
+        client.connect(new StateListener() {
+            @Override
+            public void stateChanged(State state) {
+                synchronized (ResolverTest.this){
+                    ResolverTest.this.notify();
+                }
+            }
+        });
 
         DNSResolverRPC resolver = new DNSResolverRPC(client,(short)0);
 
@@ -181,9 +199,18 @@ public class ResolverTest {
 
         TCPClient client = tcpClientBuilder.build();
 
-        client.connect();
+        synchronized (this){
+            this.wait();
+        }
 
-        client.connected().util();
+        client.connect(new StateListener() {
+            @Override
+            public void stateChanged(State state) {
+                synchronized (ResolverTest.this){
+                    ResolverTest.this.notify();
+                }
+            }
+        });
 
         DNSResolverRPC resolver = new DNSResolverRPC(client,(short)0);
 
